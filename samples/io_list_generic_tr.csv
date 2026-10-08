@@ -1,0 +1,39 @@
+﻿Etiket;Adres;Veri Tipi;Açıklama;Pano;Aralık Min;Aralık Max;Birim
+EStop_Panel_CH1;%I0.0;Bool;Emergency stop main panel channel 1;+CP1;;;
+EStop_Panel_CH2;%I0.1;Bool;Emergency stop main panel channel 2;+CP1;;;
+Door1_Closed;%I0.2;Bool;Safety door 1 closed (interlock);+CP1;;;
+LightCurtain_OK;%I0.3;Bool;Light curtain infeed OK;+CP1;;;
+PB_Start;%I0.4;Bool;Push button start;+CP1;;;
+PB_Stop;%I0.5;Bool;Push button stop;+CP1;;;
+PB_Reset;%I0.6;Bool;Fault reset;+CP1;;;
+SS_AutoManual;%I0.7;Bool;Selector auto / manual;+CP1;;;
+Q1_MCB_OK;%I1.0;Bool;Main breaker Q1 feedback;+CP1;;;
+M1_Conveyor_Running;%I1.1;Bool;Conveyor motor M1 running feedback;+CP1;;;
+M2_Pump_Running;%I1.2;Bool;Hydraulic pump M2 running;+CP1;;;
+Cyl1_Extended;%I1.3;Bool;Cylinder 1 end position extended;+CP1;;;
+Cyl1_Retracted;%I1.4;Bool;Cylinder 1 end position retracted;+CP1;;;
+Prox_PartPresent;%I1.5;Bool;Inductive sensor part present;+CP1;;;
+Photo_Infeed;%I1.6;Bool;Photo sensor infeed;+CP1;;;
+Photo_Outfeed;%I1.7;Bool;Photo sensor outfeed;+CP1;;;
+LS_Tank_High;%I2.0;Bool;Level switch tank high;+CP1;;;
+PS_Air_OK;%I2.1;Bool;Pressure switch compressed air OK;+CP1;;;
+VFD1_Ready;%I2.2;Bool;G120 drive conveyor ready;+CP1;;;
+VFD1_Fault;%I2.3;Bool;G120 drive conveyor fault;+CP1;;;
+M1_Contactor;%Q0.0;Bool;Conveyor motor M1 contactor;+CP1;;;
+M2_Pump_Contactor;%Q0.1;Bool;Hydraulic pump M2 contactor;+CP1;;;
+YV1_Cyl1_Extend;%Q0.2;Bool;Valve cylinder 1 extend;+CP1;;;
+YV2_Cyl1_Retract;%Q0.3;Bool;Valve cylinder 1 retract;+CP1;;;
+HL_Green;%Q0.4;Bool;Signal lamp green;+CP1;;;
+HL_Red;%Q0.5;Bool;Signal lamp red;+CP1;;;
+Horn;%Q0.6;Bool;Alarm horn;+CP1;;;
+Heater1;%Q0.7;Bool;Heater zone 1 contactor;+CP1;;;
+VFD1_Enable;%Q1.0;Bool;G120 drive conveyor enable;+CP1;;;
+TT101_Temp;%IW64;Int;Temperature tank PT100;+CP1;0;150;°C
+PT102_Pressure;%IW66;Int;Hydraulic pressure transmitter;+CP1;0;250;bar
+LT103_Level;%IW68;Int;Tank level transmitter;+CP1;0;2000;mm
+FT104_Flow;%IW70;Int;Cooling water flow;+CP1;0;60;l/min
+VFD1_SpeedSP;%QW80;Int;Conveyor speed setpoint to drive;+CP1;0;1500;rpm
+PV201_Position;%QW82;Int;Proportional valve position setpoint;+CP1;0;100;%
+Auto_Mode;%M10.0;Bool;Internal flag auto mode;+CP1;;;
+Cycle_Counter;%MD20;DInt;Cycle counter;+CP1;;;
+Clock_1Hz;%M0.5;Bool;Clock memory 1 Hz;+CP1;;;

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CommissionPack</title>
+<meta name="description" content="Turn a TIA Portal tag export or any IO list into IO checkout sheets, analog loop checks, FAT and SAT protocols in one minute.">
+<style>
+  :root {
+    --bg: #ffffff; --bg-alt: #f4f6fa; --text: #1b2433; --muted: #5a6474;
+    --brand: #1f3864; --accent: #2f6fdf; --ok: #1e7d4f; --border: #d9dee7; --card: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151d; --bg-alt: #161d28; --text: #e6eaf0; --muted: #9aa5b5;
+      --brand: #9db8ea; --accent: #6b9cf5; --ok: #5ccf94; --border: #2a3444; --card: #161d28;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151d; --bg-alt: #161d28; --text: #e6eaf0; --muted: #9aa5b5;
+    --brand: #9db8ea; --accent: #6b9cf5; --ok: #5ccf94; --border: #2a3444; --card: #161d28;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 18px 0; border-bottom: 1px solid var(--border); }
+  header .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .logo { font-weight: 800; color: var(--brand); letter-spacing: -.3px; }
+  nav a { color: var(--muted); text-decoration: none; margin-left: 16px; font-size: 15px; }
+  h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 56px 0 16px; letter-spacing: -.8px; }
+  h2 { font-size: clamp(24px, 3.4vw, 32px); margin: 0 0 20px; letter-spacing: -.4px; }
+  .lead { font-size: 20px; color: var(--muted); max-width: 720px; }
+  .btn { display: inline-block; padding: 13px 22px; border-radius: 8px; font-weight: 650; text-decoration: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { border: 1px solid var(--border); color: var(--text); }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 12px; }
+  .note { color: var(--muted); font-size: 14px; }
+  section { padding: 64px 0; }
+  .alt { background: var(--bg-alt); }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+  .card h3 { margin: 0 0 8px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .step-n { color: var(--accent); font-weight: 800; font-size: 14px; }
+  .price { font-size: 34px; font-weight: 800; margin: 6px 0; }
+  .price small { font-size: 15px; color: var(--muted); font-weight: 500; }
+  .card ul { padding-left: 18px; margin: 12px 0 18px; color: var(--muted); font-size: 15px; }
+  .featured { border: 2px solid var(--accent); }
+  .check { color: var(--ok); font-weight: 700; }
+  details { border-bottom: 1px solid var(--border); padding: 14px 0; }
+  summary { cursor: pointer; font-weight: 650; }
+  details p { color: var(--muted); }
+  form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  input[type=email] { flex: 1 1 240px; padding: 12px; border: 1px solid var(--border); border-radius: 8px;
+                      background: var(--card); color: var(--text); font-size: 16px; }
+  button { padding: 12px 20px; border: 0; border-radius: 8px; background: var(--accent); color: #fff;
+           font-weight: 650; font-size: 16px; cursor: pointer; }
+  footer { padding: 32px 0; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); }
+  @media (max-width: 560px) { nav { display: none; } section { padding: 44px 0; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="logo">CommissionPack</div>
+    <nav><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>Your IO list in. Your FAT / SAT package out.<br>In one minute.</h1>
+    <p class="lead">Upload a TIA Portal tag export or any Excel / CSV IO list. Get IO checkout sheets,
+      analog loop checks, FAT and SAT protocols, a punch list and sign-off pages. Ready to print. In English,
+      Turkish or German.</p>
+    <div class="cta">
+      <!-- APP_URL: replace with the deployed Streamlit URL -->
+      <a class="btn btn-primary" href="APP_URL">Try it free (32 IO points)</a>
+      <a class="btn btn-ghost" href="sample_commissioning_package.xlsx">Download a sample package</a>
+    </div>
+    <p class="note">No sign-up for the free version. Your file is processed in memory and is not stored.</p>
+  </div>
+
+  <section class="alt">
+    <div class="wrap">
+      <h2>Stop building commissioning sheets by hand</h2>
+      <div class="grid">
+        <div class="card"><h3>Hours of copy and paste</h3><p>Every project needs the same IO test sheets. Engineers copy tags, addresses and comments from the PLC into Excel. Again and again.</p></div>
+        <div class="card"><h3>Errors you find on site</h3><p>A missed IO or a wrong analog range shows up during commissioning. That is the most expensive place to find it.</p></div>
+        <div class="card"><h3>No standard format</h3><p>Each engineer uses a different template. The customer gets different documents for each machine.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <div class="grid">
+        <div class="card"><div class="step-n">STEP 1</div><h3>Export</h3><p>In TIA Portal, export the PLC tag table to Excel. Or use your own IO list.</p></div>
+        <div class="card"><div class="step-n">STEP 2</div><h3>Upload</h3><p>CommissionPack finds every DI, DO, AI and AO. It detects device types and safety IO.</p></div>
+        <div class="card"><div class="step-n">STEP 3</div><h3>Download</h3><p>One Excel file with 10 sheets. Status drop-downs, live progress and automatic analog checks.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap">
+      <h2>What is in the package</h2>
+      <div class="grid">
+        <div class="card"><p><span class="check">✓</span> DI and DO checkout with a test instruction for each device type</p></div>
+        <div class="card"><p><span class="check">✓</span> AI / AO loop check: 0-25-50-75-100 %, mA / V, S7 raw value, automatic OK / NOK</p></div>
+        <div class="card"><p><span class="check">✓</span> FAT protocol with live IO progress</p></div>
+        <div class="card"><p><span class="check">✓</span> SAT protocol for site acceptance</p></div>
+        <div class="card"><p><span class="check">✓</span> Punch list with A / B / C categories</p></div>
+        <div class="card"><p><span class="check">✓</span> Sign-off pages and summary dashboard</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <h2>Pricing</h2>
+      <div class="grid">
+        <div class="card"><h3>Free</h3><div class="price">$0</div>
+          <ul><li>Up to 32 IO points</li><li>All sheets, all languages</li><li>"Free edition" banner</li></ul>
+          <a class="btn btn-ghost" href="APP_URL">Start free</a></div>
+        <div class="card"><h3>Project Pass</h3><div class="price">$49 <small>one-time</small></div>
+          <ul><li>Unlimited IO points</li><li>30 days, unlimited packages</li><li>For one project or machine</li></ul>
+          <!-- CHECKOUT_PROJECT: Polar checkout link -->
+          <a class="btn btn-ghost" href="CHECKOUT_PROJECT">Buy Project Pass</a></div>
+        <div class="card featured"><h3>Pro</h3><div class="price">$39 <small>/ month</small></div>
+          <ul><li>Unlimited projects</li><li>All future sheet types</li><li>$390 / year (2 months free)</li></ul>
+          <a class="btn btn-primary" href="CHECKOUT_PRO">Get Pro</a></div>
+        <div class="card"><h3>Team</h3><div class="price">$119 <small>/ month</small></div>
+          <ul><li>Up to 5 engineers</li><li>Your company logo and template</li><li>Priority e-mail support</li></ul>
+          <a class="btn btn-ghost" href="CHECKOUT_TEAM">Get Team</a></div>
+      </div>
+      <p class="note">Prices in USD. VAT is added where required. Payment and invoices by our merchant of record.</p>
+    </div>
+  </section>
+
+  <section class="alt" id="faq">
+    <div class="wrap">
+      <h2>FAQ</h2>
+      <details><summary>Which files can I upload?</summary><p>TIA Portal PLC tag table export (.xlsx) and any IO list in .xlsx, .xlsm or .csv with a tag column and an address column. German addresses (E / A) also work.</p></details>
+      <details><summary>Do you store my project data?</summary><p>No. The file is processed in memory and deleted when the package is ready. No AI service receives your data.</p></details>
+      <details><summary>Does it replace the safety validation?</summary><p>No. Safety IO are marked and the protocols contain safety check items. The safety validation according to your validation plan stays your responsibility.</p></details>
+      <details><summary>Other PLC brands?</summary><p>The generic import works with any IO list. Direct exports for Rockwell and CODESYS are on the roadmap.</p></details>
+      <details><summary>Can I cancel Pro?</summary><p>Yes, at any time in the customer portal. You keep access until the end of the paid period.</p></details>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Get the free commissioning checklist</h2>
+      <p class="lead">A 1-page FAT / SAT checklist for PLC panels, plus one practical commissioning tip per week.</p>
+      <!-- FORM_ACTION: MailerLite (or Brevo) form endpoint -->
+      <form action="FORM_ACTION" method="post">
+        <input type="email" name="fields[email]" placeholder="you@company.com" required aria-label="E-mail">
+        <button type="submit">Send me the checklist</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">CommissionPack · Built by a commissioning engineer for commissioning engineers · <a href="mailto:hello@commissionpack.io">hello@commissionpack.io</a></div>
+</footer>
+</body>
+</html>
