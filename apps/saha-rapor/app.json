@@ -43,7 +43,7 @@
         {
           "cameraPermission": "The camera is used to add job photos to your report.",
           "photosPermission": "Your photo library is used to add job photos and your company logo.",
-          "microphonePermission": false
+          "microphonePermission": "The microphone is used to dictate your service report."
         }
       ],
       "expo-font"

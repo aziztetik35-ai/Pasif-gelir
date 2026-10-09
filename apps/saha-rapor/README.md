@@ -24,7 +24,7 @@ Yazım kuralı: Kısa cümle. Bir adımda bir iş.
 | Ücretsiz sınır: 3 rapor | Bitti |
 | 8 dil: EN, TR, DE, ES, FR, IT, PT, NL | Bitti |
 
-Kontroller: 15 birim testi geçti. Tip kontrolü, lint ve expo-doctor (21/21) temiz. Web derlemesinde ilk kurulum, rapor oluşturma ve imza akışı denendi.
+Kontroller: 17 birim testi geçti. Tip kontrolü, lint ve expo-doctor (21/21) temiz. Web derlemesinde ilk kurulum, rapor oluşturma ve imza akışı denendi.
 
 Örnek çıktı: [`docs/ornek-rapor.pdf`](docs/ornek-rapor.pdf). Ekran görüntüleri: [`docs/ekranlar/`](docs/ekranlar/).
 
