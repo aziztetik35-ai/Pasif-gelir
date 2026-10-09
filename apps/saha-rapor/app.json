@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "Service Report AI",
+    "slug": "service-report-ai",
+    "scheme": "servicereport",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aziztetik.servicereport",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.aziztetik.servicereport",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-sharing",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "The microphone is used to dictate your service report.",
+          "speechRecognitionPermission": "Speech recognition turns your voice into report text."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "The camera is used to add job photos to your report.",
+          "photosPermission": "Your photo library is used to add job photos and your company logo.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "extra": {
+      "aiEndpoint": "",
+      "appKey": "",
+      "revenueCatIosKey": "",
+      "revenueCatAndroidKey": "",
+      "entitlementId": "pro",
+      "privacyUrl": "",
+      "termsUrl": ""
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  // Cloudflare Worker for Service Report AI. Deploy: npx wrangler deploy
+  "name": "saha-rapor-ai",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    // Create with: npx wrangler kv namespace create USAGE  → paste the id here
+    { "binding": "USAGE", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }
+  ],
+  "vars": {
+    "MODEL": "claude-haiku-5-5",
+    "ENTITLEMENT_ID": "pro",
+    "FREE_AI_LIMIT": "3",
+    "PRO_MONTHLY_LIMIT": "300",
+    "GLOBAL_DAILY_LIMIT": "5000"
+  }
+  // Secrets (not in this file):
+  //   npx wrangler secret put ANTHROPIC_API_KEY
+  //   npx wrangler secret put APP_KEY
+  //   npx wrangler secret put REVENUECAT_SECRET
+}

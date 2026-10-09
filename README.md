@@ -7,6 +7,11 @@ IO listesi girer. Devreye alma doküman paketi 1 dakikada çıkar.
 - **Dil:** EN / TR / DE.
 - **Gizlilik:** Dosya bellekte işlenir. Saklanmaz. AI servisine gitmez.
 
+## Uygulama Fabrikası — 1. uygulama
+
+- **[Servis Raporu AI — mobil uygulama (Expo)](apps/saha-rapor/README.md)**
+- [AI servisi — Cloudflare Worker + Claude Haiku 5.5](apps/saha-rapor-ai/README.md)
+
 ## Dokümanlar
 
 - **[Yeni yön (güncel seçim) — AI Mobil Uygulama Fabrikası](docs/03-yeni-yon-uygulama-fabrikasi.md)**
