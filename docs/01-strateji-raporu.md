@@ -1,5 +1,7 @@
 # Aziz'in AI Pasif Gelir Sistemi — Strateji Raporu
 
+> **Not (9 Ekim 2026):** Bu raporun seçimi (CommissionPack) değiştirildi. Güncel seçim: [03-yeni-yon-uygulama-fabrikasi.md](03-yeni-yon-uygulama-fabrikasi.md).
+
 Tarih: 8 Ekim 2026
 Yazım kuralı: Kısa cümle. Etken çatı. Bir cümlede bir bilgi.
 

@@ -9,7 +9,8 @@ IO listesi girer. Devreye alma doküman paketi 1 dakikada çıkar.
 
 ## Dokümanlar
 
-- [Strateji raporu — 25 fikir, puanlama, seçim, 30/90 gün planı, gelir senaryoları](docs/01-strateji-raporu.md)
+- **[Yeni yön (güncel seçim) — AI Mobil Uygulama Fabrikası](docs/03-yeni-yon-uygulama-fabrikasi.md)**
+- [İlk strateji raporu (CommissionPack seçimi, artık güncel değil) — 25 fikir, puanlama, seçim, 30/90 gün planı, gelir senaryoları](docs/01-strateji-raporu.md)
 - [Uygulama planı — ürün, müşteri, rakipler, stack, ödeme, deployment](docs/02-uygulama-plani.md)
 - [Otomasyon akışları (n8n)](automation/README.md)
 
