@@ -10,6 +10,7 @@ IO listesi girer. Devreye alma doküman paketi 1 dakikada çıkar.
 ## Dokümanlar
 
 - **[Yeni yön (güncel seçim) — AI Mobil Uygulama Fabrikası](docs/03-yeni-yon-uygulama-fabrikasi.md)**
+- **[Uygulama listesi ve sıralama — 13 fikir, puanlama, yapım sırası](docs/04-uygulama-listesi.md)**
 - [İlk strateji raporu (CommissionPack seçimi, artık güncel değil) — 25 fikir, puanlama, seçim, 30/90 gün planı, gelir senaryoları](docs/01-strateji-raporu.md)
 - [Uygulama planı — ürün, müşteri, rakipler, stack, ödeme, deployment](docs/02-uygulama-plani.md)
 - [Otomasyon akışları (n8n)](automation/README.md)
