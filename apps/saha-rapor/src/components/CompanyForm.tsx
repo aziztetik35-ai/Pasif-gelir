@@ -1,10 +1,14 @@
 import * as ImagePicker from "expo-image-picker";
+import { ImagePlus, Trash } from "lucide-react-native";
 import { Image, View } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { useApp } from "../lib/AppContext";
 import { tradeLabel } from "../lib/i18n";
 import { deleteFile, storeImage } from "../lib/storage";
 import { TRADES } from "../lib/types";
+import { colors, radius, staggerDelay } from "../theme";
+import { TRADE_ICONS } from "./Hero";
 import { Button, Choice, Field } from "./ui";
 
 /** Company fields, shared by onboarding and settings. Changes are saved at once. */
@@ -38,10 +42,12 @@ export function CompanyForm() {
       />
       <Field label={t("address")} value={settings.address} multiline onChangeText={(v) => updateSettings({ address: v })} />
       {settings.logoUri ? (
-        <Image source={{ uri: settings.logoUri }} style={{ height: 70, width: 180, resizeMode: "contain", alignSelf: "center" }} />
+        <View style={{ alignItems: "center", padding: 12, borderRadius: radius.md, backgroundColor: colors.bg }}>
+          <Image source={{ uri: settings.logoUri }} style={{ height: 70, width: 180, resizeMode: "contain" }} />
+        </View>
       ) : null}
-      <Button title={settings.logoUri ? t("changeLogo") : t("addLogo")} variant="secondary" onPress={pickLogo} />
-      {settings.logoUri ? <Button title={t("removeLogo")} variant="danger" onPress={removeLogo} /> : null}
+      <Button title={settings.logoUri ? t("changeLogo") : t("addLogo")} icon={ImagePlus} variant="secondary" onPress={pickLogo} />
+      {settings.logoUri ? <Button title={t("removeLogo")} icon={Trash} variant="danger" onPress={removeLogo} /> : null}
     </View>
   );
 }
@@ -49,9 +55,16 @@ export function CompanyForm() {
 export function TradeList() {
   const { settings, updateSettings, lang } = useApp();
   return (
-    <View style={{ gap: 8 }}>
-      {TRADES.map((tr) => (
-        <Choice key={tr} label={tradeLabel(lang, tr)} selected={settings.trade === tr} onPress={() => updateSettings({ trade: tr })} />
+    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+      {TRADES.map((tr, i) => (
+        <Animated.View key={tr} entering={FadeInDown.duration(350).delay(staggerDelay(i))} style={{ width: "48%", flexGrow: 1 }}>
+          <Choice
+            label={tradeLabel(lang, tr)}
+            icon={TRADE_ICONS[tr]}
+            selected={settings.trade === tr}
+            onPress={() => updateSettings({ trade: tr })}
+          />
+        </Animated.View>
       ))}
     </View>
   );

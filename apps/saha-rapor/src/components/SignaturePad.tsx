@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, type GestureResponderEvent, type LayoutChangeEv
 import Svg, { Path } from "react-native-svg";
 
 import type { Signature } from "../lib/types";
-import { colors } from "./ui";
+import { colors, fonts, radius } from "../theme";
 
 type Props = {
   value: Signature | null;
@@ -82,12 +82,12 @@ export function SignaturePad({ value, onChange, onDrawing, placeholder }: Props)
 const styles = StyleSheet.create({
   box: {
     height: HEIGHT,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderStyle: "dashed",
-    borderColor: colors.border,
-    borderRadius: 10,
-    backgroundColor: "#FFFFFF",
+    borderColor: "#C7D2E3",
+    borderRadius: radius.md,
+    backgroundColor: "#FBFCFE",
     overflow: "hidden",
   },
-  placeholder: { position: "absolute", alignSelf: "center", top: HEIGHT / 2 - 10, color: "#9AA5B5", fontSize: 16 },
+  placeholder: { position: "absolute", alignSelf: "center", top: HEIGHT / 2 - 10, color: colors.placeholder, fontSize: 16, fontFamily: fonts.medium },
 });

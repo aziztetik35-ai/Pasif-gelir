@@ -98,19 +98,19 @@ export function buildReportHtml(report: Report, settings: Settings, lang: Lang, 
 <style>
   @page { margin: 18mm 14mm; }
   * { box-sizing: border-box; }
-  body { font-family: -apple-system, "Helvetica Neue", Roboto, Arial, sans-serif; color: #1b2433; font-size: 11pt; line-height: 1.45; margin: 0; }
-  header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1f5eff; padding-bottom: 10px; margin-bottom: 14px; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #0F172A; font-size: 11pt; line-height: 1.45; margin: 0; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1E40AF; padding-bottom: 10px; margin-bottom: 14px; }
   .company { font-size: 9.5pt; color: #4a5568; }
-  .company strong { display: block; font-size: 14pt; color: #1b2433; }
+  .company strong { display: block; font-size: 14pt; color: #0F172A; }
   .logo { max-height: 60px; max-width: 180px; object-fit: contain; }
   h1 { font-size: 17pt; margin: 4px 0 10px; }
-  h2 { font-size: 11.5pt; color: #1f5eff; text-transform: uppercase; letter-spacing: .4px; margin: 16px 0 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; }
+  h2 { font-size: 11.5pt; color: #1E40AF; text-transform: uppercase; letter-spacing: .4px; margin: 16px 0 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; }
   table { border-collapse: collapse; width: 100%; }
   .meta th, .meta td { text-align: left; padding: 3px 8px 3px 0; vertical-align: top; font-size: 10pt; }
   .meta th { color: #4a5568; font-weight: 600; width: 34%; }
   .grid { display: flex; gap: 18px; }
   .grid > div { flex: 1; }
-  .summary { background: #f4f6fa; border-left: 4px solid #1f5eff; padding: 8px 10px; margin: 10px 0; }
+  .summary { background: #FFF7ED; border-left: 4px solid #EA580C; padding: 8px 10px; margin: 10px 0; }
   ul { margin: 4px 0 0 18px; padding: 0; }
   li { margin: 2px 0; }
   .parts th, .parts td { border: 1px solid #d9dee7; padding: 5px 8px; text-align: left; font-size: 10pt; }

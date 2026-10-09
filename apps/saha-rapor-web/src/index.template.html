@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service Report AI — Voice to signed service reports</title>
+<meta name="description" content="Speak about the job, take photos, let the customer sign. Service Report AI turns your voice into a professional PDF service report in 2 minutes. 8 languages.">
+<meta name="theme-color" content="#0B1B3F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EA580C%22/%3E%3Cpath d=%22M16 21v3M21 15v1a5 5 0 0 1-10 0v-1%22 stroke=%22white%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3Crect x=%2213.5%22 y=%227%22 width=%225%22 height=%2210%22 rx=%222.5%22 fill=%22white%22/%3E%3C/svg%3E">
+<meta property="og:title" content="Service Report AI">
+<meta property="og:description" content="Your voice in. A signed service report out.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!--
+  Design system: ui-ux-pro-max-skill data (MIT) — "Home Services" product type:
+  Trust Blue + Safety Orange, Flat Design + Micro-interactions, Plus Jakarta Sans.
+  Patterns inspired by 21st.dev (spotlight card, glowing border, marquee, shiny button)
+  and motionsites.ai (animated hero backgrounds). All code here is original.
+  Icons: Lucide (ISC License, © Lucide Icons and Contributors).
+-->
+<style>
+  :root {
+    --navy: #0B1B3F; --blue9: #1E3A8A; --blue7: #1E40AF; --blue5: #3B82F6; --blue1: #DBEAFE; --blue0: #EFF6FF;
+    --orange: #EA580C; --orange5: #F97316; --orange1: #FFEDD5;
+    --green: #059669; --green1: #D1FAE5; --amber: #B45309;
+    --ink: #0F172A; --ink2: #334155; --muted: #64748B; --line: #E2E8F0; --bg: #F5F7FB; --card: #FFFFFF;
+    --r-md: 14px; --r-lg: 20px; --r-xl: 28px;
+    --shadow: 0 10px 30px rgba(11,27,63,.08);
+    --ease: cubic-bezier(.2,.8,.2,1);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+  svg.i { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  :focus-visible { outline: 3px solid var(--orange5); outline-offset: 3px; border-radius: 8px; }
+
+  /* ---------- nav ---------- */
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s var(--ease), box-shadow .3s; }
+  .nav.scrolled { background: rgba(11,27,63,.78); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); box-shadow: 0 1px 0 rgba(255,255,255,.08); }
+  .nav .wrap { display: flex; align-items: center; gap: 24px; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 800; text-decoration: none; letter-spacing: -.3px; }
+  .logo-mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: linear-gradient(135deg, var(--orange5), var(--orange)); color: #fff; font-size: 18px; box-shadow: 0 6px 16px rgba(234,88,12,.4); }
+  .nav-links { display: flex; gap: 22px; margin-left: auto; }
+  .nav-links a { color: rgba(255,255,255,.78); text-decoration: none; font-weight: 600; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #fff; }
+
+  /* ---------- buttons ---------- */
+  .btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: var(--r-md); font: 700 16px/1 "Plus Jakarta Sans", sans-serif; text-decoration: none; border: 0; cursor: pointer; transition: transform .15s var(--ease), box-shadow .2s; }
+  .btn:active { transform: scale(.97); }
+  .btn-accent { color: #fff; background: linear-gradient(135deg, var(--orange5), var(--orange)); box-shadow: 0 10px 24px rgba(234,88,12,.35); }
+  .btn-accent:hover { box-shadow: 0 14px 30px rgba(234,88,12,.45); }
+  .btn-ghost { color: #fff; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); }
+  .btn-ghost:hover { background: rgba(255,255,255,.16); }
+  .btn-light { color: var(--blue7); background: #fff; border: 1.5px solid var(--line); }
+  .btn-sm { height: 42px; padding: 0 16px; font-size: 14px; }
+  /* shiny sweep (21st.dev "shiny button" idea) */
+  .shine::after { content: ""; position: absolute; top: -20%; bottom: -20%; width: 40%; left: -60%; transform: skewX(-18deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); animation: shine 3.2s var(--ease) infinite; }
+  @keyframes shine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; overflow: hidden; color: #fff; background: radial-gradient(1200px 600px at 80% -10%, #1E40AF 0%, transparent 60%), linear-gradient(160deg, #0B1B3F 0%, #13265a 55%, #1E3A8A 100%); padding: 140px 0 96px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .55; pointer-events: none; }
+  .orb.o1 { width: 520px; height: 520px; background: #3B82F6; top: -180px; left: -160px; animation: drift1 16s ease-in-out infinite alternate; }
+  .orb.o2 { width: 380px; height: 380px; background: #F97316; opacity: .28; bottom: -140px; right: 8%; animation: drift2 19s ease-in-out infinite alternate; }
+  .orb.o3 { width: 300px; height: 300px; background: #7DD3FC; opacity: .22; top: 30%; left: 45%; animation: drift3 22s ease-in-out infinite alternate; }
+  @keyframes drift1 { to { transform: translate(120px, 80px) scale(1.15); } }
+  @keyframes drift2 { to { transform: translate(-90px, -60px) scale(1.1); } }
+  @keyframes drift3 { to { transform: translate(60px, -90px) scale(.9); } }
+  .grid-lines { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); }
+  .hero .wrap { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); font-size: 14px; font-weight: 600; color: rgba(255,255,255,.9); }
+  .pill b { background: var(--orange); color: #fff; padding: 3px 8px; border-radius: 999px; font-size: 12px; }
+  h1 { font-size: clamp(40px, 6vw, 68px); line-height: 1.02; letter-spacing: -2px; margin: 22px 0 18px; font-weight: 800; }
+  .grad { background: linear-gradient(90deg, #FDBA74, #F97316 40%, #FB923C 70%, #FDE68A); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gradmove 6s linear infinite; }
+  @keyframes gradmove { to { background-position: 200% center; } }
+  .lead { font-size: 19px; line-height: 1.6; color: rgba(255,255,255,.78); max-width: 560px; margin: 0 0 30px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .trust { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 30px; color: rgba(255,255,255,.7); font-size: 14px; font-weight: 600; }
+  .trust span { display: inline-flex; align-items: center; gap: 7px; }
+  .trust svg { color: #FDBA74; font-size: 17px; }
+
+  /* ---------- phone demo ---------- */
+  .phone { position: relative; width: 320px; height: 640px; margin: 0 auto; border-radius: 48px; background: #0a1430; padding: 12px; box-shadow: 0 40px 80px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.08); transform: rotate(-3deg); animation: float 7s ease-in-out infinite; }
+  @keyframes float { 50% { transform: rotate(-3deg) translateY(-12px); } }
+  .phone::before { content: ""; position: absolute; top: 22px; left: 50%; width: 96px; height: 26px; transform: translateX(-50%); background: #0a1430; border-radius: 20px; z-index: 3; }
+  .screen { position: relative; height: 100%; border-radius: 38px; overflow: hidden; background: var(--bg); color: var(--ink); }
+  .scr-head { background: linear-gradient(150deg, #0B1B3F, #1E40AF); color: #fff; padding: 58px 20px 22px; border-radius: 0 0 26px 26px; }
+  .scr-head small { opacity: .7; font-weight: 600; }
+  .scr-head h3 { margin: 4px 0 0; font-size: 21px; letter-spacing: -.3px; }
+  .stage { position: absolute; inset: 150px 16px 16px; transition: opacity .5s var(--ease), transform .5s var(--ease); }
+  .stage.hide { opacity: 0; transform: translateY(14px); pointer-events: none; }
+  .mic-wrap { position: relative; display: grid; place-items: center; height: 150px; }
+  .mic-btn { position: relative; z-index: 2; width: 86px; height: 86px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 36px; background: linear-gradient(135deg, var(--orange5), var(--orange)); box-shadow: 0 12px 26px rgba(234,88,12,.4); }
+  .ring { position: absolute; width: 86px; height: 86px; border-radius: 50%; border: 2px solid rgba(234,88,12,.5); animation: ring 1.8s ease-out infinite; }
+  .ring.r2 { animation-delay: .6s; }
+  @keyframes ring { to { transform: scale(1.9); opacity: 0; } }
+  .wave { display: flex; justify-content: center; align-items: center; gap: 5px; height: 40px; }
+  .wave i { width: 6px; border-radius: 3px; background: var(--orange); animation: wave 1s ease-in-out infinite; }
+  .wave i:nth-child(1) { animation-delay: -.9s } .wave i:nth-child(2) { animation-delay: -.7s } .wave i:nth-child(3) { animation-delay: -.5s } .wave i:nth-child(4) { animation-delay: -.3s } .wave i:nth-child(5) { animation-delay: -.1s } .wave i:nth-child(6) { animation-delay: -.4s } .wave i:nth-child(7) { animation-delay: -.8s }
+  @keyframes wave { 0%, 100% { height: 8px; } 50% { height: 34px; } }
+  .transcript { margin-top: 14px; background: #fff; border: 1.5px solid var(--line); border-radius: 16px; padding: 14px; font-size: 14px; line-height: 1.5; min-height: 120px; color: var(--ink2); }
+  .caret { display: inline-block; width: 2px; height: 16px; background: var(--orange); vertical-align: -3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .sk { height: 12px; border-radius: 6px; margin: 10px 0; background: linear-gradient(90deg, #E7ECF4 0%, #F7F9FC 40%, #E7ECF4 80%); background-size: 200% 100%; animation: sk 1.3s ease-in-out infinite; }
+  @keyframes sk { to { background-position: -200% 0; } }
+  .writing { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--blue7); font-size: 15px; margin-bottom: 12px; }
+  .rcard { background: #fff; border-radius: 18px; padding: 16px; box-shadow: var(--shadow); font-size: 13px; }
+  .rcard h4 { margin: 0 0 8px; font-size: 15px; }
+  .rcard .lbl { font-size: 11px; font-weight: 800; color: var(--blue7); margin: 10px 0 4px; letter-spacing: .3px; }
+  .rcard ul { margin: 0; padding-left: 16px; color: var(--ink2); }
+  .rcard .parts { display: flex; justify-content: space-between; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; margin-top: 4px; color: var(--ink2); }
+  .sig { margin-top: 8px; height: 46px; border-bottom: 1.5px solid var(--ink); }
+  .sig path { stroke: var(--ink); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-dasharray: 400; stroke-dashoffset: 400; }
+  .stage.on .sig path { animation: draw 1.6s .6s var(--ease) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .toast { position: absolute; left: 0; right: 0; bottom: 4px; display: flex; align-items: center; gap: 10px; background: var(--green); color: #fff; padding: 12px 14px; border-radius: 14px; font-weight: 700; font-size: 14px; opacity: 0; transform: translateY(10px); transition: all .4s var(--ease); }
+  .stage.on .toast { opacity: 1; transform: none; transition-delay: 2.2s; }
+
+  /* ---------- sections ---------- */
+  section { padding: 96px 0; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--orange); font-weight: 800; font-size: 14px; letter-spacing: .3px; }
+  h2 { font-size: clamp(30px, 4vw, 46px); line-height: 1.1; letter-spacing: -1.2px; margin: 12px 0 14px; }
+  .sub { color: var(--muted); font-size: 18px; line-height: 1.6; max-width: 640px; margin: 0; }
+  .center { text-align: center; } .center .sub { margin: 0 auto; }
+
+  /* marquee */
+  .marquee { padding: 34px 0; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .track { display: flex; gap: 14px; width: max-content; animation: marquee 38s linear infinite; }
+  .track.rev { animation-direction: reverse; margin-top: 14px; }
+  .marquee:hover .track { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  .chip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-weight: 700; color: var(--ink2); white-space: nowrap; box-shadow: 0 2px 8px rgba(11,27,63,.04); }
+  .chip svg { color: var(--blue7); font-size: 18px; }
+
+  /* steps */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 52px; position: relative; }
+  .steps::before { content: ""; position: absolute; top: 34px; left: 16%; right: 16%; height: 2px; background: repeating-linear-gradient(90deg, var(--blue1) 0 10px, transparent 10px 18px); }
+  .step { position: relative; background: #fff; border-radius: var(--r-lg); padding: 28px; box-shadow: var(--shadow); }
+  .step .num { width: 68px; height: 68px; border-radius: 22px; display: grid; place-items: center; font-size: 30px; color: #fff; background: linear-gradient(135deg, var(--blue5), var(--blue7)); box-shadow: 0 10px 22px rgba(30,64,175,.3); margin-bottom: 18px; position: relative; z-index: 1; }
+  .step:nth-child(2) .num { background: linear-gradient(135deg, var(--orange5), var(--orange)); box-shadow: 0 10px 22px rgba(234,88,12,.3); }
+  .step:nth-child(3) .num { background: linear-gradient(135deg, #10B981, var(--green)); box-shadow: 0 10px 22px rgba(5,150,105,.3); }
+  .step h3 { margin: 0 0 8px; font-size: 21px; }
+  .step p { margin: 0; color: var(--muted); line-height: 1.6; }
+
+  /* bento + spotlight (21st.dev "spotlight card" idea) */
+  .bento { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: minmax(210px, auto); gap: 18px; margin-top: 52px; }
+  .tile { position: relative; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow); --x: 50%; --y: 50%; transition: transform .25s var(--ease), border-color .25s; }
+  .tile::before { content: ""; position: absolute; inset: 0; background: radial-gradient(380px circle at var(--x) var(--y), rgba(59,130,246,.12), transparent 45%); opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .tile:hover { transform: translateY(-3px); border-color: var(--blue1); }
+  .tile:hover::before { opacity: 1; }
+  .tile h3 { margin: 16px 0 8px; font-size: 20px; letter-spacing: -.3px; }
+  .tile p { margin: 0; color: var(--muted); line-height: 1.6; }
+  .ticon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: var(--blue0); color: var(--blue7); }
+  .t-a { grid-column: span 4; grid-row: span 2; background: linear-gradient(160deg, #0B1B3F, #1E3A8A); color: #fff; border: 0; }
+  .t-a p { color: rgba(255,255,255,.75); } .t-a .ticon { background: rgba(255,255,255,.12); color: #FDBA74; }
+  .t-b, .t-c { grid-column: span 2; } .t-d, .t-e, .t-f { grid-column: span 2; }
+  .mini-wave { display: flex; gap: 6px; align-items: center; height: 90px; margin-top: 28px; }
+  .mini-wave i { flex: 1; max-width: 10px; border-radius: 5px; background: linear-gradient(180deg, #FDBA74, #F97316); animation: wave 1.2s ease-in-out infinite; }
+  .bubble { margin-top: 22px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 16px; font-size: 15px; line-height: 1.55; color: rgba(255,255,255,.9); }
+  .bubble b { color: #FDBA74; }
+  .langs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .langs span { padding: 5px 10px; border-radius: 999px; background: var(--blue0); color: var(--blue7); font-weight: 700; font-size: 13px; }
+
+  /* showcase */
+  .show { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .paper { position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 30px 60px rgba(11,27,63,.18); transform: perspective(1200px) rotateY(-8deg) rotateX(3deg); transition: transform .5s var(--ease); background: #fff; }
+  .paper:hover { transform: perspective(1200px) rotateY(0) rotateX(0); }
+  .checks { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 14px; }
+  .checks li { display: flex; gap: 12px; align-items: flex-start; font-weight: 600; color: var(--ink2); line-height: 1.5; }
+  .checks svg { color: var(--green); font-size: 22px; background: var(--green1); border-radius: 8px; padding: 3px; }
+
+  /* pricing + glowing border (21st.dev idea) */
+  .prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 52px; align-items: stretch; }
+  .price { position: relative; background: #fff; border-radius: 22px; padding: 30px; border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .price h3 { margin: 0; font-size: 18px; }
+  .amount { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; margin: 14px 0 4px; }
+  .amount small { font-size: 16px; color: var(--muted); font-weight: 600; letter-spacing: 0; }
+  .price ul { list-style: none; padding: 0; margin: 18px 0 26px; display: grid; gap: 10px; color: var(--ink2); font-weight: 500; }
+  .price li { display: flex; gap: 10px; align-items: center; } .price li svg { color: var(--green); }
+  .price .btn { margin-top: auto; }
+  .featured { border: 0; isolation: isolate; }
+  .featured::before { content: ""; position: absolute; inset: -2px; border-radius: 24px; z-index: -2; background: conic-gradient(from var(--a), #F97316, #FDBA74, #3B82F6, #1E40AF, #F97316); animation: spin 5s linear infinite; }
+  .featured::after { content: ""; position: absolute; inset: 0; border-radius: 22px; background: #fff; z-index: -1; }
+  @property --a { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+  @keyframes spin { to { --a: 360deg; } }
+  .tag { position: absolute; top: -13px; right: 22px; background: linear-gradient(135deg, var(--orange5), var(--orange)); color: #fff; font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; box-shadow: 0 6px 14px rgba(234,88,12,.35); }
+
+  /* faq */
+  .faq { max-width: 780px; margin: 44px auto 0; display: grid; gap: 12px; }
+  details { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 4px 22px; transition: box-shadow .2s; }
+  details[open] { box-shadow: var(--shadow); }
+  summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; font-weight: 700; font-size: 17px; }
+  summary::-webkit-details-marker { display: none; }
+  summary svg { transition: transform .25s var(--ease); color: var(--muted); font-size: 20px; }
+  details[open] summary svg { transform: rotate(180deg); }
+  details p { margin: 0 0 18px; color: var(--muted); line-height: 1.65; }
+
+  /* final cta */
+  .final { position: relative; overflow: hidden; color: #fff; background: linear-gradient(150deg, #0B1B3F, #1E3A8A); border-radius: 32px; padding: 72px 32px; text-align: center; }
+  .final h2 { color: #fff; } .final .sub { color: rgba(255,255,255,.75); margin: 0 auto 30px; }
+  footer { padding: 40px 0 56px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: center; }
+  footer nav { display: flex; gap: 18px; } footer a { text-decoration: none; font-weight: 600; } footer a:hover { color: var(--ink); }
+
+  /* reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 960px) {
+    .hero .wrap, .show { grid-template-columns: 1fr; }
+    .hero { padding-top: 120px; }
+    .phone { transform: none; animation: none; width: 300px; height: 600px; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .t-a { grid-column: span 2; grid-row: auto; } .t-b, .t-c, .t-d, .t-e, .t-f { grid-column: span 1; }
+    .prices, .steps { grid-template-columns: 1fr; } .steps::before { display: none; }
+    .nav-links { display: none; }
+    .paper { transform: none; }
+  }
+  @media (max-width: 560px) {
+    h1 { letter-spacing: -1px; }
+    .bento { grid-template-columns: 1fr; } .t-a, .t-b, .t-c, .t-d, .t-e, .t-f { grid-column: auto; }
+    section { padding: 72px 0; }
+    .final { padding: 56px 20px; border-radius: 24px; }
+  }
+  /* respect reduced motion: stop loops, show content */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+    .sig path { stroke-dashoffset: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Service Report AI home"><span class="logo-mark"><svg class="i" viewBox="0 0 24 24">__ICON_mic__</svg></span>Service Report AI</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#how">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-accent btn-sm" href="#download">Get the app</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grid-lines"></div>
+    <div class="wrap">
+      <div>
+        <span class="pill"><b>NEW</b> AI service reports in 8 languages</span>
+        <h1 id="hero-title">Your voice in.<br><span class="grad">A signed report</span> out.</h1>
+        <p class="lead">Speak about the job, snap photos, let the customer sign. Service Report AI turns it into a professional PDF with your logo — in about two minutes.</p>
+        <div class="cta-row" id="download">
+          <a class="btn btn-accent shine" href="#" aria-label="Download on the App Store (coming soon)"><svg class="i" viewBox="0 0 24 24">__ICON_smartphone__</svg>App Store — soon</a>
+          <a class="btn btn-ghost" href="#" aria-label="Get it on Google Play (coming soon)"><svg class="i" viewBox="0 0 24 24">__ICON_smartphone__</svg>Google Play — soon</a>
+        </div>
+        <div class="trust">
+          <span><svg class="i" viewBox="0 0 24 24">__ICON_clock__</svg>2-minute reports</span>
+          <span><svg class="i" viewBox="0 0 24 24">__ICON_wifi-off__</svg>Works offline</span>
+          <span><svg class="i" viewBox="0 0 24 24">__ICON_lock__</svg>Photos stay on your phone</span>
+        </div>
+      </div>
+
+      <div class="phone" aria-label="Animated demo: voice becomes a signed PDF report" role="img">
+        <div class="screen">
+          <div class="scr-head"><small>New report · ABC Market</small><h3>Describe the job</h3></div>
+
+          <div class="stage" data-stage="0">
+            <div class="mic-wrap"><span class="ring"></span><span class="ring r2"></span><span class="mic-btn"><svg class="i" viewBox="0 0 24 24">__ICON_mic__</svg></span></div>
+            <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="transcript"><span id="typed"></span><span class="caret"></span></div>
+          </div>
+
+          <div class="stage hide" data-stage="1">
+            <div class="writing"><svg class="i" viewBox="0 0 24 24">__ICON_sparkles__</svg>AI is writing your report…</div>
+            <div class="rcard"><div class="sk" style="width:70%;height:16px"></div><div class="sk"></div><div class="sk" style="width:85%"></div><div class="sk" style="width:60%"></div><div class="sk"></div><div class="sk" style="width:75%"></div></div>
+          </div>
+
+          <div class="stage hide" data-stage="2">
+            <div class="rcard">
+              <h4>HVAC – Daikin FTXM35</h4>
+              <div class="lbl">FINDINGS</div><ul><li>Refrigerant leak at outdoor unit</li></ul>
+              <div class="lbl">WORK PERFORMED</div><ul><li>Leak point brazed, system vacuumed</li><li>Refrigerant recharged</li></ul>
+              <div class="lbl">PARTS USED</div>
+              <div class="parts"><span>R32 refrigerant</span><b>2 kg</b></div>
+              <div class="parts"><span>Filter drier</span><b>1</b></div>
+              <div class="lbl">CUSTOMER SIGNATURE</div>
+              <svg class="sig" viewBox="0 0 260 46" width="100%" height="46" aria-hidden="true"><path d="M6 34 C 30 4, 40 44, 62 22 S 92 8, 104 30 S 140 40, 150 18 S 186 12, 200 30 S 236 36, 254 14"/></svg>
+            </div>
+            <div class="toast"><svg class="i" viewBox="0 0 24 24">__ICON_file-check__</svg>PDF ready · Sent to customer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-label="Trades that use Service Report AI">
+    <div class="track" id="track1"></div>
+    <div class="track rev" id="track2"></div>
+  </div>
+
+  <section id="how">
+    <div class="wrap center reveal">
+      <span class="eyebrow"><svg class="i" viewBox="0 0 24 24">__ICON_zap__</svg>HOW IT WORKS</span>
+      <h2>Finish the paperwork before you leave the site.</h2>
+      <p class="sub">No more reports at the kitchen table at night. Three steps, about two minutes.</p>
+    </div>
+    <div class="wrap steps">
+      <div class="step reveal"><div class="num"><svg class="i" viewBox="0 0 24 24">__ICON_mic__</svg></div><h3>1. Speak</h3><p>Tap the microphone and talk naturally: the fault, what you did, the parts you used, what you recommend. Any of 8 languages.</p></div>
+      <div class="step reveal"><div class="num"><svg class="i" viewBox="0 0 24 24">__ICON_wand-sparkles__</svg></div><h3>2. Review</h3><p>The app sorts your words into findings, work performed, parts and recommendations. Add photos. Edit anything.</p></div>
+      <div class="step reveal"><div class="num"><svg class="i" viewBox="0 0 24 24">__ICON_pen-line__</svg></div><h3>3. Sign &amp; send</h3><p>The customer signs on screen. A branded PDF goes out by WhatsApp or e-mail. Done.</p></div>
+    </div>
+  </section>
+
+  <section id="features" style="padding-top:24px">
+    <div class="wrap center reveal">
+      <span class="eyebrow"><svg class="i" viewBox="0 0 24 24">__ICON_sparkles__</svg>FEATURES</span>
+      <h2>Built for people who work with their hands.</h2>
+      <p class="sub">Big buttons, short steps and a report your customer will actually read.</p>
+    </div>
+    <div class="wrap bento">
+      <article class="tile t-a reveal">
+        <div class="ticon"><svg class="i" viewBox="0 0 24 24">__ICON_mic__</svg></div>
+        <h3>Talk like you talk. Get a report that reads like an office wrote it.</h3>
+        <p>The phone's own speech recognition writes down your words. AI turns them into clear, professional sentences — without inventing anything.</p>
+        <div class="mini-wave" aria-hidden="true"></div>
+        <div class="bubble">“compressor was tripping, found a <b>loose neutral</b>, replaced <b>2 terminal blocks</b>, recommend a thermal check every year”</div>
+      </article>
+      <article class="tile t-b reveal"><div class="ticon"><svg class="i" viewBox="0 0 24 24">__ICON_wifi-off__</svg></div><h3>Works without signal</h3><p>Basement, roof, plant room. The offline formatter still builds your report.</p></article>
+      <article class="tile t-c reveal"><div class="ticon"><svg class="i" viewBox="0 0 24 24">__ICON_file-text__</svg></div><h3>Your logo on every PDF</h3><p>Company details, report number, customer and equipment. Professional every time.</p></article>
+      <article class="tile t-d reveal"><div class="ticon"><svg class="i" viewBox="0 0 24 24">__ICON_camera__</svg></div><h3>Photo proof</h3><p>Up to 6 job photos, compressed and placed in the report automatically.</p></article>
+      <article class="tile t-e reveal"><div class="ticon"><svg class="i" viewBox="0 0 24 24">__ICON_pen-line__</svg></div><h3>On-screen signature</h3><p>The customer signs with a finger. No paper, no printer, no arguments later.</p></article>
+      <article class="tile t-f reveal"><div class="ticon"><svg class="i" viewBox="0 0 24 24">__ICON_languages__</svg></div><h3>8 languages</h3><p>Speak in yours. The report follows.</p><div class="langs"><span>EN</span><span>TR</span><span>DE</span><span>ES</span><span>FR</span><span>IT</span><span>PT</span><span>NL</span></div></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap show">
+      <div class="paper reveal"><img src="assets/report-sample.png" alt="Sample PDF service report with findings, work performed, parts table and customer signature" loading="lazy" width="1191" height="1794"></div>
+      <div class="reveal">
+        <span class="eyebrow"><svg class="i" viewBox="0 0 24 24">__ICON_file-check__</svg>THE RESULT</span>
+        <h2>A report your customer trusts.</h2>
+        <p class="sub">Clean structure, your brand, a signature and a date. It makes your work visible — and helps you get paid faster.</p>
+        <ul class="checks">
+          <li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Findings, work performed, parts table, recommendations</li>
+          <li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Follow-up flag when you need to come back</li>
+          <li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Share as PDF by WhatsApp, e-mail or any app</li>
+          <li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>All reports saved on your phone, ready to resend</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" style="padding-top:24px">
+    <div class="wrap center reveal">
+      <span class="eyebrow"><svg class="i" viewBox="0 0 24 24">__ICON_crown__</svg>PRICING</span>
+      <h2>Less than one hour of your time. Per month.</h2>
+      <p class="sub">Start free. Upgrade when the app saves you time — it will.</p>
+    </div>
+    <div class="wrap prices">
+      <div class="price reveal">
+        <h3>Free</h3><div class="amount">$0</div><span style="color:var(--muted)">To try it on real jobs</span>
+        <ul><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>3 reports</li><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>All features</li><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>AI report writing</li></ul>
+        <a class="btn btn-light" href="#download">Download</a>
+      </div>
+      <div class="price reveal">
+        <h3>Pro Monthly</h3><div class="amount">$14.99<small> / month</small></div><span style="color:var(--muted)">3-day free trial</span>
+        <ul><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Unlimited reports</li><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>AI writing from your voice</li><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Logo, photos, signature</li></ul>
+        <a class="btn btn-light" href="#download">Start free trial</a>
+      </div>
+      <div class="price featured reveal">
+        <span class="tag">BEST VALUE · SAVE 55%</span>
+        <h3>Pro Yearly</h3><div class="amount">$79.99<small> / year</small></div><span style="color:var(--muted)">That is $6.67 per month</span>
+        <ul><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Everything in Pro</li><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Best price per report</li><li><svg class="i" viewBox="0 0 24 24">__ICON_check__</svg>Priority support</li></ul>
+        <a class="btn btn-accent shine" href="#download">Start free trial</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="padding-top:24px">
+    <div class="wrap center reveal"><span class="eyebrow">FAQ</span><h2>Questions, answered.</h2></div>
+    <div class="wrap faq">
+      <details class="reveal"><summary>Do I need internet?<svg class="i" viewBox="0 0 24 24">__ICON_chevron-down__</svg></summary><p>No. Dictation, photos, signature and PDF work offline. With internet, AI writes a more polished report. Without it, the offline formatter sorts your notes.</p></details>
+      <details class="reveal"><summary>Where is my data stored?<svg class="i" viewBox="0 0 24 24">__ICON_chevron-down__</svg></summary><p>Reports, photos and signatures stay on your phone. Only the dictated text is sent to our AI service to write the report. It is not stored there.</p></details>
+      <details class="reveal"><summary>Which trades is it for?<svg class="i" viewBox="0 0 24 24">__ICON_chevron-down__</svg></summary><p>HVAC, electrical, elevators, appliance repair, machine maintenance, security systems, plumbing and general service. Any job that ends with “please sign here”.</p></details>
+      <details class="reveal"><summary>Can I cancel any time?<svg class="i" viewBox="0 0 24 24">__ICON_chevron-down__</svg></summary><p>Yes. Subscriptions are managed by the App Store or Google Play. Cancel in your store account settings. Your reports stay on your phone.</p></details>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="final reveal">
+        <div class="orb o2" style="opacity:.25"></div>
+        <h2>Your next report takes two minutes.</h2>
+        <p class="sub">Download the app, speak about your next job and see for yourself.</p>
+        <a class="btn btn-accent shine" href="#download"><svg class="i" viewBox="0 0 24 24">__ICON_arrow-right__</svg>Get Service Report AI</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Service Report AI</span>
+    <nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="mailto:hello@example.com">Contact</a></nav>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // nav background after scroll
+  const nav = document.getElementById("nav");
+  const onScroll = () => nav.classList.toggle("scrolled", scrollY > 20);
+  addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  // trades marquee (duplicated so the loop is seamless)
+  const trades = [["snowflake","HVAC"],["zap","Electrical"],["arrow-up-down","Elevators"],["washing-machine","Appliance repair"],["cog","Machine maintenance"],["shield-check","Security systems"],["droplets","Plumbing"],["briefcase","Facility service"]];
+  const chip = ([icon, name]) => `<span class="chip"><svg class="i" viewBox="0 0 24 24">${ICONS[icon]}</svg>${name}</span>`;
+  const row = trades.map(chip).join("");
+  document.getElementById("track1").innerHTML = row + row;
+  document.getElementById("track2").innerHTML = [...trades].reverse().map(chip).join("").repeat(2);
+
+  // bento mini waveform
+  const mw = document.querySelector(".mini-wave");
+  mw.innerHTML = Array.from({ length: 28 }, (_, i) => `<i style="animation-delay:${-(i * 0.09).toFixed(2)}s;height:${20 + ((i * 37) % 60)}px"></i>`).join("");
+
+  // spotlight cards follow the pointer
+  document.querySelectorAll(".tile").forEach((el) => el.addEventListener("pointermove", (e) => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--x", `${e.clientX - r.left}px`);
+    el.style.setProperty("--y", `${e.clientY - r.top}px`);
+  }));
+
+  // reveal on scroll (stagger capped so long groups do not feel slow)
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    const sibs = [...en.target.parentElement.children].filter((c) => c.classList.contains("reveal"));
+    en.target.style.transitionDelay = `${Math.min(sibs.indexOf(en.target), 6) * 60}ms`;
+    en.target.classList.add("in"); io.unobserve(en.target);
+  }), { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  // phone demo: speak → AI writes → signed report
+  const stages = [...document.querySelectorAll(".stage")];
+  const typed = document.getElementById("typed");
+  const text = "Refrigerant leak at the outdoor unit. Brazed the leak point, vacuumed the system and recharged 2 kg R32. Replaced the filter drier.";
+  const show = (n) => stages.forEach((s, i) => { s.classList.toggle("hide", i !== n); s.classList.toggle("on", i === n); });
+  if (reduce) { typed.textContent = text; show(2); return; }
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  (async function loop() {
+    for (;;) {
+      show(0); typed.textContent = "";
+      for (const word of text.split(" ")) { typed.textContent += (typed.textContent ? " " : "") + word; await sleep(140); }
+      await sleep(700); show(1); await sleep(1900); show(2); await sleep(5200);
+    }
+  })();
+})();
+</script>
+</body>
+</html>

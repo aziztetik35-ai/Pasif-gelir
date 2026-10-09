@@ -24,9 +24,30 @@ Yazım kuralı: Kısa cümle. Bir adımda bir iş.
 | Ücretsiz sınır: 3 rapor | Bitti |
 | 8 dil: EN, TR, DE, ES, FR, IT, PT, NL | Bitti |
 
-Kontroller: 13 birim testi geçti. Tip kontrolü ve lint temiz. Web derlemesinde ilk kurulum, rapor oluşturma ve imza akışı denendi.
+Kontroller: 13 birim testi geçti. Tip kontrolü, lint ve expo-doctor (21/21) temiz. Web derlemesinde ilk kurulum, rapor oluşturma ve imza akışı denendi.
 
-Örnek çıktı: [`docs/ornek-rapor.pdf`](docs/ornek-rapor.pdf).
+Örnek çıktı: [`docs/ornek-rapor.pdf`](docs/ornek-rapor.pdf). Ekran görüntüleri: [`docs/ekranlar/`](docs/ekranlar/).
+
+### Tasarım sistemi
+
+| Konu | Karar | Kaynak |
+|---|---|---|
+| Stil | Düz tasarım + mikro animasyonlar | ui-ux-pro-max-skill, "Home Services (Plumber/Electrician)" |
+| Renk | Güven mavisi `#1E40AF`, güvenlik turuncusu `#EA580C`, başarı yeşili `#059669` | aynı kaynak |
+| Yazı tipi | Plus Jakarta Sans | aynı kaynak, "Enterprise SaaS Mobile" |
+| Hareket | Basma 150 ms yay animasyonu, liste girişleri 40 ms aralıklı (en fazla 8 öğe), yükleme iskeleti 1,3 sn | aynı kaynağın hareket tablosu |
+| Hero | Hareketli "aurora" gradyan + ince ızgara çizgileri | motionsites.ai / 21st.dev hero arka planları |
+| Ana ekran | Bento istatistik ızgarası, sayaçla artan rakamlar | 21st.dev "Stats & KPIs", "Numbers" |
+| Butonlar | Gradyan + parlama efekti, dokunma titreşimi (haptic) | 21st.dev "shiny button" |
+| Dikte | Nabız halkaları + sesin şiddetiyle hareket eden dalga çubukları + süre | özgün |
+| Kayıt | Onay işareti animasyonu + başarı titreşimi | özgün |
+
+Kurallar:
+- Tüm değerler `src/theme.ts` dosyasında.
+- "Hareketi azalt" açıksa döngüsel animasyonlar durur.
+- Dokunma alanları en az 44 pt.
+- İkonlu düğmelerin hepsinde erişilebilirlik etiketi var.
+- Başlıklar otomatik büyük harfe çevrilmez. Sebep: Türkçede "i → İ" dönüşümü yanlış olur.
 
 ---
 
@@ -138,7 +159,8 @@ app/                    Ekranlar (Expo Router)
   report/[id].tsx       Kayıtlı rapor
   settings.tsx          Ayarlar
   paywall.tsx           Abonelik ekranı
-src/components/         Ekran parçaları (ses girişi, imza, fotoğraf, form)
+src/theme.ts            Tasarım değerleri (renk, yazı, boşluk, hareket)
+src/components/         Ekran parçaları (ui kiti, hero/aurora, ses girişi, imza, fotoğraf, form)
 src/lib/                Mantık
   structure.ts          AI'sız rapor düzenleyici
   ai.ts                 AI servisi istemcisi (hata olursa AI'sız düzenleyiciye geçer)

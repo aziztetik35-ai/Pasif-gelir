@@ -11,6 +11,7 @@ IO listesi girer. Devreye alma doküman paketi 1 dakikada çıkar.
 
 - **[Servis Raporu AI — mobil uygulama (Expo)](apps/saha-rapor/README.md)**
 - [AI servisi — Cloudflare Worker + Claude Haiku 5.5](apps/saha-rapor-ai/README.md)
+- [Tanıtım sitesi + gizlilik/şartlar sayfaları](apps/saha-rapor-web/README.md)
 
 ## Dokümanlar
 

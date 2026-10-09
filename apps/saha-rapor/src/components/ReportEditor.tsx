@@ -1,6 +1,9 @@
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
+import { Camera, Check, FileText, Mic, PenLine, Plus, Share2, Sparkles, Trash, User, Wand2, X } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 
 import { structureReport } from "../lib/ai";
 import { useApp } from "../lib/AppContext";
@@ -8,12 +11,18 @@ import { createPdf, sharePdf } from "../lib/pdf";
 import { newId, reportNumber } from "../lib/storage";
 import { linesToList, listToLines } from "../lib/structure";
 import type { Part, Report, ReportContent, Signature } from "../lib/types";
+import { colors, fonts, radius, shadowStrong, space } from "../theme";
+import { SuccessBurst } from "./Hero";
 import { PhotoPicker } from "./PhotoPicker";
 import { SignaturePad } from "./SignaturePad";
-import { Button, Card, colors, Field, Notice, styles as ui } from "./ui";
+import { Button, Card, Field, Notice, Skeleton, Txt, styles as ui } from "./ui";
 import { VoiceInput } from "./VoiceInput";
 
 type Props = { existing?: Report };
+
+function successHaptic() {
+  if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+}
 
 export function ReportEditor({ existing }: Props) {
   const { t, lang, settings, saveReport, deleteReport, appUserId } = useApp();
@@ -46,6 +55,7 @@ export function ReportEditor({ existing }: Props) {
   const [structuring, setStructuring] = useState(false);
   const [saving, setSaving] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [success, setSuccess] = useState<{ pdf: string } | null>(null);
 
   function applyContent(c: ReportContent) {
     setContent(c);
@@ -60,15 +70,10 @@ export function ReportEditor({ existing }: Props) {
     if (!transcript.trim()) return Alert.alert(t("needContent"));
     setStructuring(true);
     try {
-      const result = await structureReport({
-        transcript,
-        lang,
-        trade: settings.trade,
-        equipment,
-        appUserId: await appUserId(),
-      });
+      const result = await structureReport({ transcript, lang, trade: settings.trade, equipment, appUserId: await appUserId() });
       applyContent(result.content);
       setSource(result.source);
+      successHaptic();
     } finally {
       setStructuring(false);
     }
@@ -106,13 +111,19 @@ export function ReportEditor({ existing }: Props) {
       await saveReport(report, !persisted);
       setPersisted(true);
       const pdf = await createPdf(report, settings, lang);
+      successHaptic();
+      setSuccess({ pdf });
       await sharePdf(pdf, t("sharePdf"));
-      if (isNew) router.replace(`/report/${report.id}`);
     } catch {
       Alert.alert(t("error"));
     } finally {
       setSaving(false);
     }
+  }
+
+  function closeSuccess() {
+    setSuccess(null);
+    if (isNew) router.replace(`/report/${identity.id}`);
   }
 
   function confirmDelete() {
@@ -135,16 +146,16 @@ export function ReportEditor({ existing }: Props) {
   return (
     <KeyboardAvoidingView style={ui.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={ui.scroll} scrollEnabled={scrollEnabled} keyboardShouldPersistTaps="handled">
-        <Card title={t("customerSection")}>
+        <Card title={t("customerSection")} icon={User} index={0}>
           <Field label={t("customerName")} value={customerName} onChangeText={setCustomerName} />
           <Field label={t("customerAddress")} value={customerAddress} onChangeText={setCustomerAddress} />
           <Field label={t("customerContact")} value={customerContact} onChangeText={setCustomerContact} autoCapitalize="none" />
           <Field label={t("equipment")} value={equipment} onChangeText={setEquipment} />
         </Card>
 
-        {!content ? (
-          <Card title={t("voiceSection")}>
-            <Text style={ui.p}>{t("voiceHint")}</Text>
+        {!content && !structuring ? (
+          <Card title={t("voiceSection")} icon={Mic} index={1}>
+            <Txt variant="body">{t("voiceHint")}</Txt>
             <VoiceInput
               value={transcript}
               onChange={setTranscript}
@@ -158,75 +169,138 @@ export function ReportEditor({ existing }: Props) {
                 unavailable: t("speechUnavailable"),
               }}
             />
-            <Button title={structuring ? t("structuring") : t("createReport")} onPress={create} loading={structuring} />
+            <Button title={t("createReport")} icon={Wand2} size="lg" variant="accent" shine onPress={create} />
           </Card>
-        ) : (
+        ) : null}
+
+        {structuring ? (
+          <Card title={t("structuring")} icon={Sparkles}>
+            <Skeleton height={22} width="70%" />
+            <Skeleton height={14} />
+            <Skeleton height={14} width="92%" />
+            <Skeleton height={14} width="80%" />
+            <View style={{ height: 6 }} />
+            <Skeleton height={14} width="60%" />
+            <Skeleton height={14} width="88%" />
+          </Card>
+        ) : null}
+
+        {content && !structuring ? (
           <>
-            {source === "basic" && isNew ? <Notice text={t("basicNotice")} /> : null}
-            <Card title={t("reportSection")}>
+            {source === "basic" && isNew ? <Notice text={t("basicNotice")} icon={Sparkles} /> : null}
+            <Card
+              title={t("reportSection")}
+              icon={FileText}
+              index={1}
+              right={source === "ai" ? <Sparkles size={16} color={colors.accent} strokeWidth={2.4} /> : null}
+            >
               <Field label={t("reportTitle")} value={content.title} onChangeText={(v) => setContent({ ...content, title: v })} />
               <Field label={t("summary")} value={content.summary} multiline onChangeText={(v) => setContent({ ...content, summary: v })} />
               <Field label={`${t("findings")} · ${t("onePerLine")}`} value={findingsText} multiline onChangeText={setFindingsText} />
               <Field label={`${t("workPerformed")} · ${t("onePerLine")}`} value={workText} multiline onChangeText={setWorkText} />
 
-              <Text style={ui.label}>{t("partsUsed")}</Text>
+              <Txt variant="label">{t("partsUsed")}</Txt>
               {parts.map((p, i) => (
-                <View key={i} style={ui.row}>
+                <Animated.View key={i} entering={FadeInDown.duration(250)} style={styles.partRow}>
                   <TextInput
-                    style={[ui.input, { flex: 1 }]}
+                    style={[ui.input, { flex: 1, minWidth: 0 }]}
                     value={p.name}
                     placeholder={t("partName")}
+                    placeholderTextColor={colors.placeholder}
+                    accessibilityLabel={t("partName")}
                     onChangeText={(v) => updatePart(i, { name: v })}
                   />
                   <TextInput
-                    style={[ui.input, { width: 70, textAlign: "center" }]}
+                    style={[ui.input, styles.qty]}
                     value={p.quantity}
                     placeholder={t("quantity")}
+                    placeholderTextColor={colors.placeholder}
+                    accessibilityLabel={t("quantity")}
                     onChangeText={(v) => updatePart(i, { quantity: v })}
                   />
-                  <Pressable accessibilityLabel={t("delete")} onPress={() => setParts(parts.filter((_, j) => j !== i))}>
-                    <Text style={styles.x}>✕</Text>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={t("delete")}
+                    onPress={() => setParts(parts.filter((_, j) => j !== i))}
+                    style={styles.partDelete}
+                    hitSlop={6}
+                  >
+                    <X size={16} color={colors.danger} strokeWidth={2.6} />
                   </Pressable>
-                </View>
+                </Animated.View>
               ))}
-              <Button title={t("addPart")} variant="secondary" onPress={() => setParts([...parts, { name: "", quantity: "1" }])} />
+              <Button title={t("addPart")} icon={Plus} variant="secondary" onPress={() => setParts([...parts, { name: "", quantity: "1" }])} />
 
               <Field label={`${t("recommendations")} · ${t("onePerLine")}`} value={recText} multiline onChangeText={setRecText} />
-              <View style={[ui.row, { justifyContent: "space-between" }]}>
+              <View style={styles.switchRow}>
                 <Text style={styles.switchLabel}>{t("followUp")}</Text>
-                <Switch value={content.followUpRequired} onValueChange={(v) => setContent({ ...content, followUpRequired: v })} />
+                <Switch
+                  value={content.followUpRequired}
+                  onValueChange={(v) => setContent({ ...content, followUpRequired: v })}
+                  trackColor={{ true: colors.accent, false: colors.border }}
+                  thumbColor="#FFFFFF"
+                  accessibilityLabel={t("followUp")}
+                />
               </View>
             </Card>
 
-            <Card title={t("photosSection")}>
+            <Card title={t("photosSection")} icon={Camera} index={2}>
               <PhotoPicker
                 photos={photos}
                 onChange={setPhotos}
-                labels={{
-                  camera: t("takePhoto"),
-                  gallery: t("pickPhoto"),
-                  max: t("maxPhotos", { n: 6 }),
-                  cameraDenied: t("cameraDenied"),
-                }}
+                labels={{ camera: t("takePhoto"), gallery: t("pickPhoto"), max: t("maxPhotos", { n: 6 }), cameraDenied: t("cameraDenied") }}
               />
             </Card>
 
-            <Card title={t("signatureSection")}>
+            <Card title={t("signatureSection")} icon={PenLine} index={3}>
               <SignaturePad value={signature} onChange={setSignature} onDrawing={(d) => setScrollEnabled(!d)} placeholder={t("signHere")} />
               <Button title={t("clearSignature")} variant="secondary" onPress={() => setSignature(null)} />
               <Field label={t("signerName")} value={signerName} onChangeText={setSignerName} />
             </Card>
 
-            <Button title={t("savePdf")} onPress={saveAndShare} loading={saving} />
-            {existing ? <Button title={t("delete")} variant="danger" onPress={confirmDelete} /> : null}
+            <Button title={t("savePdf")} icon={Share2} size="lg" variant="accent" shine onPress={saveAndShare} loading={saving} />
+            {existing ? <Button title={t("delete")} icon={Trash} variant="danger" onPress={confirmDelete} /> : null}
           </>
-        )}
+        ) : null}
       </ScrollView>
+
+      <Modal visible={!!success} transparent animationType="fade" onRequestClose={closeSuccess}>
+        <View style={styles.backdrop}>
+          <Animated.View entering={FadeIn.duration(200)} style={[styles.sheet, shadowStrong]}>
+            <SuccessBurst>
+              <Check size={42} color="#FFFFFF" strokeWidth={3} />
+            </SuccessBurst>
+            <Txt variant="h2" style={{ textAlign: "center" }}>
+              {t("savedTitle")}
+            </Txt>
+            <Txt variant="body" style={{ textAlign: "center" }}>
+              {t("savedText")}
+            </Txt>
+            <View style={{ alignSelf: "stretch", gap: space.sm }}>
+              <Button title={t("sharePdf")} icon={Share2} onPress={() => success && sharePdf(success.pdf, t("sharePdf"))} />
+              <Button title={t("done")} variant="secondary" onPress={closeSuccess} />
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  x: { fontSize: 18, color: colors.danger, paddingHorizontal: 6 },
-  switchLabel: { fontSize: 16, color: colors.text, flex: 1 },
+  partRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  qty: { width: 72, textAlign: "center", paddingHorizontal: 6 },
+  partDelete: { width: 32, height: 44, alignItems: "center", justifyContent: "center" },
+  switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 4 },
+  switchLabel: { fontFamily: fonts.semibold, fontSize: 15, color: colors.text, flex: 1 },
+  backdrop: { flex: 1, backgroundColor: "rgba(11,27,63,0.55)", alignItems: "center", justifyContent: "center", padding: space.xl },
+  sheet: {
+    width: "100%",
+    maxWidth: 380,
+    backgroundColor: colors.card,
+    borderRadius: radius.xl,
+    padding: space.xl,
+    alignItems: "center",
+    gap: space.md,
+  },
 });

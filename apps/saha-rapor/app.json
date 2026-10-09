@@ -45,7 +45,8 @@
           "photosPermission": "Your photo library is used to add job photos and your company logo.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "aiEndpoint": "",

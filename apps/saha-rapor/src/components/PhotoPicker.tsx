@@ -1,10 +1,13 @@
 import * as ImagePicker from "expo-image-picker";
+import { Camera, Image as ImageIcon, X } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, View } from "react-native";
+import Animated, { ZoomIn } from "react-native-reanimated";
 
 import { deleteFile, storeImage } from "../lib/storage";
 import { MAX_PHOTOS } from "../lib/types";
-import { Button, colors, styles as ui } from "./ui";
+import { colors, radius } from "../theme";
+import { Button, styles as ui } from "./ui";
 
 type Props = {
   photos: string[];
@@ -57,21 +60,21 @@ export function PhotoPicker({ photos, onChange, labels }: Props) {
     <View style={{ gap: 10 }}>
       <View style={ui.row}>
         <View style={{ flex: 1 }}>
-          <Button title={labels.camera} icon="📷" variant="secondary" onPress={() => add(true)} loading={busy} />
+          <Button title={labels.camera} icon={Camera} variant="secondary" onPress={() => add(true)} loading={busy} />
         </View>
         <View style={{ flex: 1 }}>
-          <Button title={labels.gallery} icon="🖼" variant="secondary" onPress={() => add(false)} disabled={busy} />
+          <Button title={labels.gallery} icon={ImageIcon} variant="secondary" onPress={() => add(false)} disabled={busy} />
         </View>
       </View>
       {photos.length ? (
         <View style={styles.grid}>
           {photos.map((uri) => (
-            <View key={uri} style={styles.thumbWrap}>
+            <Animated.View key={uri} entering={ZoomIn.duration(250)} style={styles.thumbWrap}>
               <Image source={{ uri }} style={styles.thumb} />
-              <Pressable accessibilityLabel="Remove photo" onPress={() => remove(uri)} style={styles.remove}>
-                <Text style={styles.removeText}>✕</Text>
+              <Pressable accessibilityRole="button" accessibilityLabel="Remove photo" onPress={() => remove(uri)} style={styles.remove} hitSlop={8}>
+                <X size={14} color="#fff" strokeWidth={3} />
               </Pressable>
-            </View>
+            </Animated.View>
           ))}
         </View>
       ) : null}
@@ -82,7 +85,7 @@ export function PhotoPicker({ photos, onChange, labels }: Props) {
 const styles = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   thumbWrap: { width: "31%", aspectRatio: 1 },
-  thumb: { width: "100%", height: "100%", borderRadius: 8, backgroundColor: colors.border },
+  thumb: { width: "100%", height: "100%", borderRadius: radius.sm, backgroundColor: colors.border },
   remove: {
     position: "absolute",
     top: 4,
@@ -90,9 +93,8 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(11,27,63,0.7)",
     alignItems: "center",
     justifyContent: "center",
   },
-  removeText: { color: "#fff", fontWeight: "700" },
 });
