@@ -65,7 +65,7 @@ Bu yolu telefondan da yapabilirsiniz.
 7. 2–4 dakika bekleyin. İş yeşil tik alır. Bu, derlemenin Expo'da başladığı anlamına gelir.
 8. Derleme Expo sunucusunda **10–30 dakika** sürer. Ücretsiz planda sıra bekleme süresi uzun olabilir.
 9. Telefonda https://expo.dev adresini açın ve giriş yapın.
-10. **Projects** → **service-report-ai** → **Builds** sayfasını açın.
+10. Derleme sayfasını açın: https://expo.dev/accounts/atetiks-team/projects/service-report-ai/builds
 11. En üstteki derlemeye basın. Durum **Finished** olmalı.
 12. **Install** düğmesine basın. APK dosyası iner.
 13. İnen dosyayı açın.
