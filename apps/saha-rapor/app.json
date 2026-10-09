@@ -55,7 +55,11 @@
       "revenueCatAndroidKey": "",
       "entitlementId": "pro",
       "privacyUrl": "",
-      "termsUrl": ""
-    }
+      "termsUrl": "",
+      "eas": {
+        "projectId": "efdf7612-4188-46fc-bba6-257d0ba4a67e"
+      }
+    },
+    "owner": "atetiks-team"
   }
 }
