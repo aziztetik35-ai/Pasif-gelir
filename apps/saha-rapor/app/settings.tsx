@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { CompanyForm, TradeList } from "../src/components/CompanyForm";
+import { showTestPanel, TestPanel } from "../src/components/TestPanel";
 import { Badge, Button, Card, Choice, Txt, styles as ui } from "../src/components/ui";
 import { useApp } from "../src/lib/AppContext";
 import { config } from "../src/lib/config";
@@ -60,6 +61,8 @@ export default function SettingsScreen() {
           ))}
         </View>
       </Card>
+
+      {showTestPanel() ? <TestPanel index={4} /> : null}
 
       {config.privacyUrl ? <Button title={t("privacy")} icon={ShieldCheck} variant="secondary" onPress={() => Linking.openURL(config.privacyUrl)} /> : null}
       {config.termsUrl ? <Button title={t("terms")} icon={FileText} variant="secondary" onPress={() => Linking.openURL(config.termsUrl)} /> : null}

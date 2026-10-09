@@ -61,12 +61,13 @@ const HEADERS: Record<Section, string[]> = {
   ],
 };
 
-/** Keywords that put a sentence without a header into a section. */
+/** Keywords that put a sentence without a header into a section. A keyword matches at the start of a word. */
 const KEYWORDS: Record<Exclude<Section, "work">, string[]> = {
   findings: [
     "found", "broken", "leak", "worn", "damaged", "not working", "faulty", "error code", "noise", "dirty",
     "tripping", "tripped", "overheat", "burnt", "burned", "alarm", "not starting", "short circuit",
-    "tespit", "arızalı", "bozuk", "kaçak", "sızıntı", "aşınmış", "hasarlı", "çalışmıyor", "hata kodu", "ses", "kirli",
+    "doesn't", "does not", "won't", "isn't", "not cooling", "not heating", "no power", "no heat", "low pressure",
+    "tespit", "arızalı", "bozuk", "kaçak", "kaçağ", "sızıntı", "sızdır", "aşınmış", "hasarlı", "çalışmıyor", "hata kodu", "ses", "kirli",
     "atıyor", "attı", "aşırı ısın", "yanmış", "alarm veriyor", "kısa devre", "çalışmadı",
     "löst aus", "überhitzt", "verbrannt", "kurzschluss",
     "festgestellt", "defekt", "undicht", "verschlissen", "beschädigt", "funktioniert nicht", "fehlercode",
@@ -97,6 +98,40 @@ const KEYWORDS: Record<Exclude<Section, "work">, string[]> = {
     "adviseer", "zou moeten", "volgende",
   ],
 };
+
+/** "I found ..." / "buldum": the sentence is a finding, also when it names a repair word. */
+const DISCOVERY = [
+  "found", "noticed", "detected", "discovered", "diagnosed",
+  "buldum", "tespit", "gördüm", "fark ettim", "belirledim",
+  "festgestellt", "gefunden", "bemerkt",
+  "encontr", "detecté", "noté",
+  "constaté", "trouvé", "remarqué",
+  "rilevato", "trovato", "notato",
+  "constat", "notei", "detectei",
+  "geconstateerd", "gevonden", "opgemerkt",
+];
+
+/**
+ * Repair actions. A sentence with one of these is "work performed",
+ * also when it names the fault ("Kaçağı kaynakla kapattım" = "I welded the leak shut").
+ */
+const REPAIR_VERBS = [
+  "fixed", "repaired", "cleaned", "sealed", "adjusted", "tightened", "refilled", "recharged", "welded", "reset",
+  "tested", "connected", "flushed", "lubricated", "calibrated", "used",
+  "kapattım", "kapatıldı", "onardım", "onarıldı", "tamir ettim", "tamir edildi", "temizledim", "temizlendi",
+  "yaptım", "yapıldı", "ayarladım", "ayarlandı", "bağladım", "bağlandı", "sıktım", "doldurdum", "dolduruldu",
+  "kullandım", "kullanıldı", "kaynak", "test ettim", "sıfırladım", "resetledim", "yağladım", "kalibre ettim",
+  "giderdim", "giderildi", "düzelttim", "düzeltildi", "monte ettim", "vakumladım", "vakumlandı",
+  "repariert", "gereinigt", "abgedichtet", "eingestellt", "nachgefüllt", "verwendet", "behoben", "geprüft",
+  "reparé", "limpié", "sellé", "ajusté", "rellené", "utilicé", "arreglé", "comprobé",
+  "réparé", "nettoyé", "rempli", "utilisé", "vérifié",
+  "riparato", "pulito", "regolato", "riempito", "utilizzato", "usato", "controllato",
+  "reparei", "limpei", "ajustei", "usei", "utilizei", "verifiquei", "consertei",
+  "gerepareerd", "gereinigd", "afgesteld", "bijgevuld", "gebruikt", "gecontroleerd", "verholpen",
+];
+
+/** Negative verb forms that describe a fault: "soğutmuyor" (does not cool), "çalışmadı" (did not work). */
+const NEGATIVE_FORMS = /\p{L}{2,}m[ıiuü]yor|\p{L}{2,}m[ae]d[ıi](?!\p{L})/u;
 
 const FOLLOW_UP = [
   "follow-up", "follow up", "come back", "return visit", "next visit",
@@ -131,9 +166,23 @@ const REPLACE_VERBS = [
   "sostituito", "cambiato", "installato",
   "substituí", "troquei", "instalei",
   "vervangen", "geplaatst", "geïnstalleerd",
+  // "I used 2 kg R32" also names parts.
+  "used", "kullandım", "kullanıldı", "verwendet", "utilicé", "utilisé", "utilizzato", "usei", "utilizei", "gebruikt",
 ];
 
-const QTY_WORDS = "x|adet|pcs|pc|pieces|piece|stück|stk|unidades|unidad|pièces|pièce|pezzi|pezzo|peças|peça|stuks|stuk|m|metre|metres|meter|meters|metro|metros|mètres|metri|lt|l|litre|liter|litros|kg";
+/** Spoken numbers at the start of a part: "iki kilo gaz" → "2 kilo gaz". Only words that are not common in other uses. */
+const NUMBER_WORDS: Record<string, number> = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  bir: 1, iki: 2, üç: 3, dört: 4, beş: 5, altı: 6, yedi: 7, sekiz: 8, dokuz: 9,
+  eins: 1, zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6, zehn: 10,
+  dos: 2, tres: 3, cuatro: 4, cinco: 5,
+  deux: 2, trois: 3, quatre: 4, cinq: 5,
+  due: 2, tre: 3, quattro: 4, cinque: 5,
+  dois: 2, duas: 2, três: 3, quatro: 4,
+  twee: 2, drie: 3,
+};
+
+const QTY_WORDS = "x|adet|kilo|kilos|kilogram|kilograms|kilogramm|gram|grams|gr|g|pcs|pc|pieces|piece|stück|stk|unidades|unidad|pièces|pièce|pezzi|pezzo|peças|peça|stuks|stuk|m|metre|metres|meter|meters|metro|metros|mètres|metri|lt|l|litre|liter|litros|kg";
 
 function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -186,14 +235,36 @@ function matchHeader(sentence: string): { section: Section; rest: string } | nul
   return { section: best.section, rest };
 }
 
+/** True if one of the words starts a word in the text. "attı" matches "sigorta attı", not "kapattım". */
+function hasWord(text: string, words: string[]): boolean {
+  return words.some((w) => {
+    let i = text.indexOf(w);
+    while (i >= 0) {
+      if (i === 0 || !/[\p{L}\p{N}]/u.test(text.charAt(i - 1))) return true;
+      i = text.indexOf(w, i + 1);
+    }
+    return false;
+  });
+}
+
 function classify(sentence: string): Section {
   const l = lower(sentence);
   // "We must come back next week" is a recommendation for the customer.
-  if (FOLLOW_UP.some((k) => l.includes(k))) return "recommendations";
-  for (const section of ["recommendations", "parts", "findings"] as const) {
-    if (KEYWORDS[section].some((k) => l.includes(k))) return section;
-  }
+  if (hasWord(l, FOLLOW_UP)) return "recommendations";
+  if (hasWord(l, KEYWORDS.recommendations)) return "recommendations";
+  if (hasWord(l, DISCOVERY)) return "findings";
+  if (hasWord(l, KEYWORDS.parts)) return "parts";
+  if (hasWord(l, REPAIR_VERBS) || hasWord(l, REPLACE_VERBS)) return "work";
+  if (hasWord(l, KEYWORDS.findings) || NEGATIVE_FORMS.test(l)) return "findings";
   return "work";
+}
+
+/** Replace spoken numbers with digits: "iki kilo gaz" → "2 kilo gaz". */
+function digitsForNumberWords(text: string): string {
+  return text.replace(/\p{L}+/gu, (w) => {
+    const n = NUMBER_WORDS[lower(w)];
+    return n === undefined ? w : String(n);
+  });
 }
 
 type ParsedPart = Part & { hasQty: boolean };
@@ -225,11 +296,12 @@ export function parseParts(text: string): Part[] {
  * "I replaced 2 terminal blocks and 3 m cable" → parts with a quantity.
  * Turkish word order is different ("2 adet filtre değiştirdim"), so the text before the verb is also checked.
  */
-export function partsFromSentence(sentence: string): Part[] {
+export function partsFromSentence(spoken: string): Part[] {
+  const sentence = digitsForNumberWords(spoken);
   const l = lower(sentence);
   for (const verb of REPLACE_VERBS) {
     const i = l.indexOf(verb);
-    if (i < 0) continue;
+    if (i < 0 || (i > 0 && /[\p{L}\p{N}]/u.test(l.charAt(i - 1)))) continue;
     const after = sentence.slice(i + verb.length).replace(/^\s*(?:the|a|an|with)\s+/i, "");
     const before = sentence.slice(0, i);
     const candidate = /\d/.test(after) ? after : before;
@@ -281,7 +353,7 @@ export function structureOffline(input: StructureInput): ReportContent {
     findings,
     partsUsed,
     recommendations,
-    followUpRequired: FOLLOW_UP.some((k) => all.includes(k)),
+    followUpRequired: hasWord(all, FOLLOW_UP),
   };
 }
 

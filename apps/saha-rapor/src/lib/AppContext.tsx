@@ -2,6 +2,7 @@ import { getLocales } from "expo-localization";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { resolveLang, translate, type StringKey } from "./i18n";
+import { config } from "./config";
 import { getAppUserId, initPurchases, isProActive, purchasesEnabled } from "./purchases";
 import { deleteFile, loadReports, loadSettings, saveReports, saveSettings } from "./storage";
 import { DEFAULT_SETTINGS, FREE_REPORT_LIMIT, type Lang, type Report, type Settings } from "./types";
@@ -88,8 +89,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const appUserId = useCallback(() => getAppUserId(settings.deviceId), [settings.deviceId]);
 
-  // Development builds without RevenueCat keys have no limit, so the app can be tested.
-  const unlimited = isPro || (!purchasesEnabled() && __DEV__);
+  // Development and test builds without RevenueCat keys have no limit, so the app can be tested.
+  const unlimited = isPro || (!purchasesEnabled() && (__DEV__ || config.testMode));
   const freeLeft = unlimited ? Infinity : Math.max(0, FREE_REPORT_LIMIT - settings.reportsCreated);
 
   const value = useMemo<AppState>(

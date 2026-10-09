@@ -48,7 +48,14 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "start:dev": "expo start --dev-client",
+    "start:tunnel": "expo start --dev-client --tunnel",
+    "build:test:android": "npx eas-cli@latest build --profile preview --platform android",
+    "build:test:ios": "npx eas-cli@latest build --profile preview --platform ios",
+    "build:dev:android": "npx eas-cli@latest build --profile development --platform android",
+    "build:dev:ios": "npx eas-cli@latest build --profile development --platform ios",
+    "device:add": "npx eas-cli@latest device:create"
   },
   "private": true
 }

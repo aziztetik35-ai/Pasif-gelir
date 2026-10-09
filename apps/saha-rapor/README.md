@@ -24,7 +24,7 @@ Yazım kuralı: Kısa cümle. Bir adımda bir iş.
 | Ücretsiz sınır: 3 rapor | Bitti |
 | 8 dil: EN, TR, DE, ES, FR, IT, PT, NL | Bitti |
 
-Kontroller: 13 birim testi geçti. Tip kontrolü, lint ve expo-doctor (21/21) temiz. Web derlemesinde ilk kurulum, rapor oluşturma ve imza akışı denendi.
+Kontroller: 15 birim testi geçti. Tip kontrolü, lint ve expo-doctor (21/21) temiz. Web derlemesinde ilk kurulum, rapor oluşturma ve imza akışı denendi.
 
 Örnek çıktı: [`docs/ornek-rapor.pdf`](docs/ornek-rapor.pdf). Ekran görüntüleri: [`docs/ekranlar/`](docs/ekranlar/).
 
@@ -69,7 +69,18 @@ Sınır dolunca uygulama raporu AI'sız düzenler. Kullanıcı hiçbir zaman eng
 
 ---
 
-## 3. Bilgisayarınızda çalıştırma
+## 3. Telefonda test
+
+Adım adım rehber: **[`docs/telefonda-test.md`](docs/telefonda-test.md)**
+
+En kolay yol (Android, bilgisayar gerekmez):
+1. GitHub deposuna `EXPO_TOKEN` gizli anahtarını ekleyin.
+2. GitHub → Actions → **"Telefon test sürümü"** → Run workflow.
+3. expo.dev'deki derleme sayfasından APK'yı telefona kurun.
+
+Test sürümünde rapor sınırı yoktur. Ayarlar ekranında "Test araçları" kartı vardır.
+
+## 3.1 Bilgisayarınızda çalıştırma
 
 Gerekli: Node.js 20+, bir iPhone veya Android telefon.
 
@@ -141,7 +152,7 @@ npx eas-cli@latest submit --platform android
 ## 5. Bilinen eksikler
 
 - Canlı Claude API çağrısı test edilmedi (bu ortamda API anahtarı yoktu). Worker'ın mantığı sahte model ile test edildi.
-- Gerçek telefonda test edilmedi. Ses tanıma, kamera ve PDF paylaşma bir development build ile denenmeli.
+- Gerçek telefonda test edilmedi. Ses tanıma, kamera ve PDF paylaşma telefonda denenmeli. Bkz. [`docs/telefonda-test.md`](docs/telefonda-test.md).
 - `appKey` uygulamanın içinde durur. Bu yüzden gerçek bir sır değildir. Asıl koruma Worker'daki kullanıcı ve günlük sınırlardır.
 - 8 dil var. Plan 20 dildi. Kalan diller sonraki sürümde eklenecek.
 - Mağaza sayfası (ekran görüntüleri, anahtar kelimeler) henüz hazır değil.

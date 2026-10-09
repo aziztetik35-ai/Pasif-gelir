@@ -81,6 +81,35 @@ describe("offline formatter", () => {
     expect(tr.partsUsed).toEqual([{ name: "Sigorta", quantity: "2 adet" }]);
   });
 
+  it("handles natural Turkish dictation (phone test guide sample)", () => {
+    const c = structureOffline({
+      lang: "tr",
+      trade: "hvac",
+      transcript:
+        "Daikin split klima soğutmuyor. Dış ünitede gaz kaçağı buldum. Kaçağı kaynakla kapattım. " +
+        "Bir adet filtre drier ve iki kilo R32 gaz kullandım. Altı ay sonra bakım öneriyorum. " +
+        "Fan motoru ses yapıyor, parça gelince tekrar geleceğim.",
+    });
+    expect(c.findings).toEqual(["Daikin split klima soğutmuyor", "Dış ünitede gaz kaçağı buldum"]);
+    expect(c.workPerformed).toEqual(["Kaçağı kaynakla kapattım", "Bir adet filtre drier ve iki kilo R32 gaz kullandım"]);
+    expect(c.partsUsed).toEqual([
+      { name: "Filtre drier", quantity: "1 adet" },
+      { name: "R32 gaz", quantity: "2 kilo" },
+    ]);
+    expect(c.recommendations).toEqual(["Altı ay sonra bakım öneriyorum", "Fan motoru ses yapıyor, parça gelince tekrar geleceğim"]);
+    expect(c.followUpRequired).toBe(true);
+  });
+
+  it("matches keywords only at the start of a word", () => {
+    // "kapattım" contains "attı" (tripped). It must stay a work step.
+    const c = structureOffline({ lang: "tr", trade: "electrical", transcript: "Panoyu kapattım. Sigorta attı." });
+    expect(c.workPerformed).toEqual(["Panoyu kapattım"]);
+    expect(c.findings).toEqual(["Sigorta attı"]);
+    const en = structureOffline({ lang: "en", trade: "general", transcript: "The unit doesn't start. I used two new gaskets." });
+    expect(en.findings).toEqual(["The unit doesn't start"]);
+    expect(en.partsUsed).toEqual([{ name: "New gaskets", quantity: "2" }]);
+  });
+
   it("splits long sentences without punctuation at connector words", () => {
     const long =
       "ich habe das Gerät geöffnet und die Platine geprüft dann habe ich den Kondensator getauscht und das Gerät wieder zusammengebaut danach lief alles einwandfrei und der Kunde war zufrieden mit der Arbeit heute";

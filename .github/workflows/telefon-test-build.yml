@@ -1,0 +1,95 @@
+# Builds a test version of the Service Report AI app on EAS (Expo cloud).
+# Start it by hand: GitHub → Actions → "Telefon test sürümü" → Run workflow.
+# One-time setup: add the repository secret EXPO_TOKEN (expo.dev → Account settings → Access tokens).
+# Guide: apps/saha-rapor/docs/telefonda-test.md
+name: Telefon test sürümü
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Telefon (android: ücretsiz, hemen kurulur / ios: Apple Developer hesabı gerekir)"
+        type: choice
+        options: [android, ios, all]
+        default: android
+      profile:
+        description: "preview: tek başına çalışan test uygulaması / development: geliştirici sürümü (bilgisayar gerekir)"
+        type: choice
+        options: [preview, development]
+        default: preview
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eas-build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: apps/saha-rapor
+    steps:
+      - name: Check the Expo token
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::EXPO_TOKEN secret is missing. Add it in Settings → Secrets and variables → Actions. See apps/saha-rapor/docs/telefonda-test.md"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/saha-rapor/package-lock.json
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install
+        run: npm ci
+
+      - name: Check (types, lint, unit tests)
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+
+      - name: Link the EAS project
+        # Creates the project on the first run. Later runs link the same project (same account + slug).
+        run: |
+          if ! grep -q '"projectId"' app.json; then
+            eas init --non-interactive --force
+          fi
+
+      - name: Start the build on EAS
+        run: |
+          eas build \
+            --profile "${{ inputs.profile }}" \
+            --platform "${{ inputs.platform }}" \
+            --non-interactive \
+            --no-wait \
+            --message "GitHub ${{ github.ref_name }} @ ${GITHUB_SHA::7}"
+
+      - name: Write the summary
+        if: success()
+        run: |
+          {
+            echo "## Derleme başladı"
+            echo ""
+            echo "- Telefon: **${{ inputs.platform }}**"
+            echo "- Profil: **${{ inputs.profile }}**"
+            echo ""
+            echo "Derleme Expo sunucusunda 10–30 dakika sürer."
+            echo "Bitince expo.dev → projeniz → Builds sayfasını açın."
+            echo "Telefonla QR kodu okutun ve uygulamayı kurun."
+          } >> "$GITHUB_STEP_SUMMARY"

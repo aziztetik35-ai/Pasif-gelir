@@ -22,4 +22,6 @@ export const config = {
   privacyUrl: extra.privacyUrl ?? "",
   termsUrl: extra.termsUrl ?? "",
   version: Constants.expoConfig?.version ?? "1.0.0",
+  /** True in test builds (eas.json → preview / development). Never true in the store build. */
+  testMode: process.env.EXPO_PUBLIC_TEST_MODE === "1",
 };
