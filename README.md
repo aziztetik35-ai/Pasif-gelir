@@ -7,11 +7,13 @@ IO listesi girer. Devreye alma doküman paketi 1 dakikada çıkar.
 - **Dil:** EN / TR / DE.
 - **Gizlilik:** Dosya bellekte işlenir. Saklanmaz. AI servisine gitmez.
 
-## Uygulama Fabrikası — 1. uygulama
+## Uygulama Fabrikası
 
-- **[Servis Raporu AI — mobil uygulama (Expo)](apps/saha-rapor/README.md)**
-- [AI servisi — Cloudflare Worker + Claude Haiku 5.5](apps/saha-rapor-ai/README.md)
-- [Tanıtım sitesi + gizlilik/şartlar sayfaları](apps/saha-rapor-web/README.md)
+Her uygulamanın kendi deposu vardır. Bu depoda strateji belgeleri ve fabrika planı durur.
+
+| # | Uygulama | Depo | İçerik |
+|---|---|---|---|
+| 1 | Servis Raporu AI | **[aziztetik35-ai/service-report-ai](https://github.com/aziztetik35-ai/service-report-ai)** (özel) | Telefon uygulaması (Expo), AI sunucusu (Cloudflare Worker + Claude Haiku 5.5), tanıtım sitesi, telefon test rehberi |
 
 ## Dokümanlar
 
