@@ -14,6 +14,7 @@ Her uygulamanın kendi deposu vardır. Bu depoda strateji belgeleri ve fabrika p
 | # | Uygulama | Depo | İçerik |
 |---|---|---|---|
 | 1 | Servis Raporu AI | **[aziztetik35-ai/service-report-ai](https://github.com/aziztetik35-ai/service-report-ai)** (özel) | Telefon uygulaması (Expo), AI sunucusu (Cloudflare Worker + Claude Haiku 5.5), tanıtım sitesi, telefon test rehberi |
+| 2 | Job Photo Log (İş Fotoğraf Günlüğü) | **aziztetik35-ai/job-photo-log** (özel, açılacak) | Saat/konum damgalı iş fotoğrafları, öncesi/sonrası, AI fotoğraf açıklaması (Claude Haiku 5.5), PDF fotoğraf raporu, tanıtım sitesi |
 
 ## Dokümanlar
 

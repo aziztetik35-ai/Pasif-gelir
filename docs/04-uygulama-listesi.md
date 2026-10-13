@@ -62,6 +62,8 @@ Yazım kuralı: Kısa cümle. Etken çatı. Bir cümlede bir bilgi.
 
 ### 2. İş Fotoğraf Günlüğü — 77 puan — 2. uygulama
 
+- **Durum (13 Ekim 2026):** Uygulama, AI sunucusu ve tanıtım sitesi yazıldı. Ad: **Job Photo Log**. Depo: `aziztetik35-ai/job-photo-log`. Fiyat: $9,99/ay veya $59,99/yıl.
+
 - **Ne yapar:** Her iş için fotoğraf zaman çizelgesi oluşturur. Fotoğraflara tarih, saat ve konum damgası koyar. Öncesi/sonrası karşılaştırması yapar. AI fotoğraflara açıklama yazar. Müşteriye tek link veya PDF gider.
 - **Kime:** Tadilat, inşaat, boya, çatı, zemin, tesisat ustaları.
 - **Rakip:** CompanyCam. Fiyatı $63–99/ay'dan başlıyor (kaynağa göre değişiyor). Bir rakip, CompanyCam'in en az 3 kullanıcı istediğini iddia ediyor. Bir kullanıcı yorumu: "Ayda ~$100 küçük firma için çok."
