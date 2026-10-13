@@ -62,7 +62,8 @@ Yazım kuralı: Kısa cümle. Etken çatı. Bir cümlede bir bilgi.
 
 ### 2. İş Fotoğraf Günlüğü — 77 puan — 2. uygulama
 
-- **Durum (13 Ekim 2026):** Uygulama, AI sunucusu ve tanıtım sitesi yazıldı. Ad: **Job Photo Log**. Depo: `aziztetik35-ai/job-photo-log`. Fiyat: $9,99/ay veya $59,99/yıl.
+- **Durum (13 Ekim 2026):** Uygulama, AI sunucusu ve tanıtım sitesi yazıldı. Depo: `aziztetik35-ai/job-photo-log`.
+- **Birleştirme (13 Ekim 2026):** 1. ve 2. uygulama tek uygulamada birleştirildi. Ad: **Jobtell** (mağaza başlığı: "Jobtell: Job Photos & Reports"). Servis raporu (sesle dikte, imza, fiyat, bakım hatırlatıcı, 6 PDF teması) bir işin içinde yazılır. Sebepler: Apple 4.3 (benzer iki uygulama) riski, rakiplerin zaten fotoğraf + imza + PDF'i tek uygulamada sunması, tek abonelik ve tek bakım yükü. `service-report-ai` deposu artık geliştirilmez. Fiyat (birleşik): $14,99/ay veya $79,99/yıl. Ad için marka kontrolü (TMview: sınıf 9 ve 42) yayından önce yapılmalıdır.
 
 - **Ne yapar:** Her iş için fotoğraf zaman çizelgesi oluşturur. Fotoğraflara tarih, saat ve konum damgası koyar. Öncesi/sonrası karşılaştırması yapar. AI fotoğraflara açıklama yazar. Müşteriye tek link veya PDF gider.
 - **Kime:** Tadilat, inşaat, boya, çatı, zemin, tesisat ustaları.
