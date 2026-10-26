@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV Fare</string>
+    <string name="service_label">TV Fare İmleci</string>
+    <string name="service_desc">Kumandada OK tuşunu basılı tutun ve sol oka basın. Fare imleci açılır. Aynı işlemi tekrar yapın. İmleç kapanır. Fare modunda yön tuşları imleci hareket ettirir. OK tuşu tıklar. OK tuşunu uzun basılı tutun. Uzun basma yapar.</string>
+</resources>

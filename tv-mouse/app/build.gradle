@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.aziz.tvmouse'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.aziz.tvmouse'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('tvmouse.keystore')
+            storePassword 'tvmouse123'
+            keyAlias 'tvmouse'
+            keyPassword 'tvmouse123'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
