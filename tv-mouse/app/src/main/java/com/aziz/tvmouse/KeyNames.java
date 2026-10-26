@@ -69,6 +69,11 @@ final class KeyNames {
                 || code == KeyEvent.KEYCODE_NUMPAD_ENTER || code == KeyEvent.KEYCODE_BUTTON_SELECT;
     }
 
+    /** Maps all OK key codes to DPAD_CENTER, so remotes that send ENTER or SELECT work the same. */
+    static int normalize(int code) {
+        return isOk(code) ? KeyEvent.KEYCODE_DPAD_CENTER : code;
+    }
+
     /** Arrows and OK. */
     static boolean isNavigation(int code) {
         return isArrow(code) || isOk(code);

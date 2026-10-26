@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -54,6 +55,8 @@ public class MouseService extends AccessibilityService
         void onMouseModeChanged(boolean on);
     }
 
+    private static final String TAG = "TvMouse";
+
     private static final int LEFT = 0;
     private static final int RIGHT = 1;
     private static final int UP = 2;
@@ -68,6 +71,7 @@ public class MouseService extends AccessibilityService
     private static final long EDGE_SCROLL_MS = 450;
     private static final long HIDE_MS = 5000;
     private static final long RECORD_TIMEOUT_MS = 15000;
+    private static final long FOCUS_TAKE_MS = 400;
 
     private static MouseService instance;
     private static StateListener stateListener;
@@ -101,6 +105,10 @@ public class MouseService extends AccessibilityService
     private final Set<Integer> swallow = new HashSet<>();
     /** Keys whose DOWN the mouse mode used. Their UP also goes to the mouse mode. */
     private final Set<Integer> mouseKeys = new HashSet<>();
+    /** Keys whose DOWN went to the app. Their UP must go to the app too. */
+    private final Set<Integer> passed = new HashSet<>();
+    /** A small focusable window. While it has the focus, Android cancels the keys held in the app. */
+    private View focusTaker;
 
     // Trigger state.
     private boolean longFired;
@@ -174,6 +182,14 @@ public class MouseService extends AccessibilityService
         }
     };
 
+    private final Runnable releaseFocus = new Runnable() {
+        @Override
+        public void run() {
+            removeWindow(focusTaker);
+            focusTaker = null;
+        }
+    };
+
     private final Runnable autoOff = new Runnable() {
         @Override
         public void run() {
@@ -232,6 +248,8 @@ public class MouseService extends AccessibilityService
     private void shutdown() {
         mouseMode = false;
         removeCursor();
+        removeWindow(focusTaker);
+        focusTaker = null;
         handler.removeCallbacksAndMessages(null);
         if (prefs != null) {
             prefs.sp.unregisterOnSharedPreferenceChangeListener(this);
@@ -284,22 +302,37 @@ public class MouseService extends AccessibilityService
         if (action != KeyEvent.ACTION_DOWN && action != KeyEvent.ACTION_UP) {
             return false;
         }
-        int code = e.getKeyCode();
+        int code = KeyNames.normalize(e.getKeyCode());
         if (code == KeyEvent.KEYCODE_UNKNOWN) {
             return false;
         }
         boolean down = action == KeyEvent.ACTION_DOWN;
         boolean first = down && e.getRepeatCount() == 0;
 
-        boolean result;
+        boolean result = false;
         try {
             result = recorder != null ? recorder.onKey(code, down, first, e.getEventTime())
                     : processKey(e, code, down, first);
+            // Never eat the UP of a key whose DOWN went to the app. The app would keep the key
+            // as held, and Android would repeat it without end.
+            if (!down && result && passed.contains(code)) {
+                result = false;
+            }
         } finally {
             if (first) {
                 held.put(code, e.getEventTime());
+                if (result) {
+                    passed.remove(code);
+                } else {
+                    passed.add(code);
+                }
             } else if (!down) {
                 held.remove(code);
+                passed.remove(code);
+            }
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                Log.d(TAG, KeyEvent.keyCodeToString(e.getKeyCode()) + (down ? " DOWN r=" + e.getRepeatCount() : " UP")
+                        + " eaten=" + result + " mouse=" + mouseMode);
             }
         }
         return result;
@@ -352,6 +385,11 @@ public class MouseService extends AccessibilityService
                 // Eat the rest of both keys, so the first key does not also click or move.
                 swallow.add(code);
                 swallow.add(partner);
+                if (passed.contains(partner)) {
+                    // The app already has the DOWN of the first key. Cancel it in the app,
+                    // so its release does not click and the key does not repeat.
+                    cancelKeysInApp();
+                }
                 mouseKeys.remove(code);
                 mouseKeys.remove(partner);
                 toggle();
@@ -572,7 +610,12 @@ public class MouseService extends AccessibilityService
         if (clickMode != Prefs.CLICK_TOUCH) {
             AccessibilityNodeInfo node = findNodeAt(x, y, longPress ? NodeTest.LONG_CLICK : NodeTest.CLICK);
             int action = longPress ? AccessibilityNodeInfo.ACTION_LONG_CLICK : AccessibilityNodeInfo.ACTION_CLICK;
-            if (node != null && node.performAction(action)) {
+            boolean done = node != null && node.performAction(action);
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                Log.d(TAG, "click at " + (int) x + "," + (int) y + " node=" + (node != null ? node.getClassName() + " "
+                        + node.getText() : "none") + " done=" + done);
+            }
+            if (done) {
                 return;
             }
             if (clickMode == Prefs.CLICK_NODE) {
@@ -707,6 +750,12 @@ public class MouseService extends AccessibilityService
             });
             Rect bounds = new Rect();
             for (AccessibilityWindowInfo w : windows) {
+                if (Log.isLoggable(TAG, Log.DEBUG)) {
+                    Rect b = new Rect();
+                    w.getBoundsInScreen(b);
+                    Log.d(TAG, "window type=" + w.getType() + " layer=" + w.getLayer() + " bounds=" + b
+                            + " title=" + w.getTitle());
+                }
                 if (w.getType() == AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY) {
                     continue;
                 }
@@ -801,14 +850,42 @@ public class MouseService extends AccessibilityService
     }
 
     private void removeCursor() {
-        if (cursor != null && windowManager != null) {
+        removeWindow(cursor);
+        cursor = null;
+    }
+
+    private void removeWindow(View v) {
+        if (v != null && windowManager != null) {
             try {
-                windowManager.removeView(cursor);
+                windowManager.removeView(v);
             } catch (RuntimeException ignored) {
                 // The window is already gone.
             }
         }
-        cursor = null;
+    }
+
+    /**
+     * Takes the input focus for a short time. Android then sends a canceled UP to the app for
+     * each key that the app holds, so the app does not click and stops the key repeat.
+     */
+    private void cancelKeysInApp() {
+        handler.removeCallbacks(releaseFocus);
+        if (focusTaker == null && windowManager != null) {
+            View v = new View(this);
+            v.setFocusable(true);
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams(1, 1,
+                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    PixelFormat.TRANSLUCENT);
+            lp.gravity = Gravity.TOP | Gravity.START;
+            try {
+                windowManager.addView(v, lp);
+                focusTaker = v;
+            } catch (RuntimeException ex) {
+                return;
+            }
+        }
+        handler.postDelayed(releaseFocus, FOCUS_TAKE_MS);
     }
 
     @SuppressWarnings("deprecation")
@@ -893,17 +970,16 @@ public class MouseService extends AccessibilityService
                 return true;
             }
             if (isDown) {
-                return true;
+                return down.contains(code);
             }
-            down.remove(code);
+            if (!down.remove(code)) {
+                return false; // The DOWN came before the recording and went to the app.
+            }
             if (code == key1 && key2 == KeyEvent.KEYCODE_UNKNOWN && !second && time - firstDown >= TRIGGER_LONG_MS) {
                 longHeld = true;
             }
             if (!down.isEmpty()) {
                 return true;
-            }
-            if (key1 == KeyEvent.KEYCODE_UNKNOWN) {
-                return true; // Only the end of a press that started before the recording.
             }
             if (key2 != KeyEvent.KEYCODE_UNKNOWN) {
                 finish(new Trigger(Trigger.COMBO, key1, key2));

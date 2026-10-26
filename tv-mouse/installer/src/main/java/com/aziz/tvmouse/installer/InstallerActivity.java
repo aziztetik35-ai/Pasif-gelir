@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -262,6 +265,8 @@ public class InstallerActivity extends Activity {
 
     private Button addButton(LinearLayout root, String text, View.OnClickListener listener) {
         Button b = new Button(this);
+        styleButton(b);
+        b.setTextSize(18);
         b.setText(text);
         b.setOnClickListener(listener);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -270,6 +275,31 @@ public class InstallerActivity extends Activity {
         lp.topMargin = dp(8);
         root.addView(b, lp);
         return b;
+    }
+
+    /** Gray button. Blue with a white frame when focused, so the D-pad position is clear on a TV. */
+    private void styleButton(Button b) {
+        StateListDrawable bg = new StateListDrawable();
+        bg.addState(new int[]{-android.R.attr.state_enabled}, box(0xFF262626, 0));
+        bg.addState(new int[]{android.R.attr.state_pressed}, box(0xFF64B5F6, 0xFFFFFFFF));
+        bg.addState(new int[]{android.R.attr.state_focused}, box(0xFF1E88E5, 0xFFFFFFFF));
+        bg.addState(new int[]{}, box(0xFF3A3A3A, 0));
+        b.setBackground(bg);
+        b.setTextColor(new ColorStateList(
+                new int[][]{{-android.R.attr.state_enabled}, {}},
+                new int[]{0xFF777777, 0xFFFFFFFF}));
+        b.setAllCaps(false);
+        b.setPadding(dp(20), dp(12), dp(20), dp(12));
+    }
+
+    private GradientDrawable box(int color, int frame) {
+        GradientDrawable d = new GradientDrawable();
+        d.setColor(color);
+        d.setCornerRadius(dp(8));
+        if (frame != 0) {
+            d.setStroke(dp(3), frame);
+        }
+        return d;
     }
 
     private int dp(int v) {

@@ -67,6 +67,23 @@ adb connect <TV-IP-ADRESI>
 adb shell appops set com.aziz.tvmouse ACCESS_RESTRICTED_SETTINGS allow
 ```
 
+## Sorun giderme
+
+- **Kumanda kilitlendi gibi:** fare modundasınız. Geri tuşunu 1 saniye basılı tutun. Fare modu kapanır.
+- **Tıklama çalışmıyor:** TV Fare > "Tıklama yöntemi" ayarını değiştirin.
+- **Hata kaydı:** uygulama çökerse, TV Fare ekranı "SON HATA" metnini gösterir.
+- **Ayrıntılı kayıt (ADB):** `adb shell setprop log.tag.TvMouse DEBUG` ve `adb logcat -s TvMouse`.
+
+## Test
+
+```
+./gradlew :app:testReleaseUnitTest
+```
+
+Robolectric testleri tuş mantığını gerçek zamanlama ile dener (kombinasyon, tek/uzun/çift basma,
+tuş kaydı, tıklama, kaydırma, Geri ile çıkış, otomatik gizleme ve kapanma). Bir test binlerce rastgele
+tuş basışı ile şu kuralı kontrol eder: uygulamaya giden her DOWN olayının UP olayı da uygulamaya gider.
+
 ## Derleme
 
 ```
