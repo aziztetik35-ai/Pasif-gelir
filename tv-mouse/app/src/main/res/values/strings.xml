@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">TV Fare</string>
     <string name="service_label">TV Fare İmleci</string>
-    <string name="service_desc">Kumandada OK tuşunu basılı tutun ve sol oka basın. Fare imleci açılır. Aynı işlemi tekrar yapın. İmleç kapanır. Fare modunda yön tuşları imleci hareket ettirir. OK tuşu tıklar. OK tuşunu uzun basılı tutun. Uzun basma yapar.</string>
+    <string name="service_desc">Kumandaya fare imleci ekler. Açma ve kapama tuşunu TV Fare uygulamasında seçin. Varsayılan: OK ve sol ok tuşuna birlikte basın. Fare modunda yön tuşları imleci hareket ettirir. OK tuşu tıklar. Geri tuşunu 1 saniye basılı tutun: fare modu kapanır. Hizmet, tıklamak için ekrandaki öğeleri okur. Hizmet hiçbir veriyi kaydetmez ve göndermez.</string>
 </resources>

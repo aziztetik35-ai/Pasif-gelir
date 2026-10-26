@@ -3,6 +3,7 @@ package com.aziz.tvmouse.installer;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -18,6 +19,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -62,26 +65,26 @@ public class InstallerActivity extends Activity {
         status.setPadding(0, dp(16), 0, dp(16));
         root.addView(status);
 
-        uninstallButton = addButton(root, "1. Eski TV Fare uygulamasını kaldır", new View.OnClickListener() {
+        uninstallButton = addButton(root, "Eski TV Fare uygulamasını kaldır", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_DELETE, Uri.parse("package:" + TARGET));
                 startActivity(i);
             }
         });
-        permissionButton = addButton(root, "2. Kurulum iznini ver", new View.OnClickListener() {
+        permissionButton = addButton(root, "Kurulum iznini ver", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openInstallPermission();
             }
         });
-        installButton = addButton(root, "3. TV Fare uygulamasını kur", new View.OnClickListener() {
+        installButton = addButton(root, "TV Fare uygulamasını kur", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 install();
             }
         });
-        openButton = addButton(root, "4. TV Fare uygulamasını aç", new View.OnClickListener() {
+        openButton = addButton(root, "TV Fare uygulamasını aç", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent launch = getPackageManager().getLeanbackLaunchIntentForPackage(TARGET);
@@ -98,12 +101,12 @@ public class InstallerActivity extends Activity {
         help.setTextSize(18);
         help.setTextColor(Color.LTGRAY);
         help.setPadding(0, dp(24), 0, 0);
-        help.setText("Bu uygulama TV Fare uygulamasını kurar. Bu yöntem ile Android, "
+        help.setText("Bu uygulama TV Fare uygulamasını kurar ve günceller. Bu yöntem ile Android, "
                 + "erişilebilirlik ayarını kilitlemez.\n\n"
-                + "Adımları sırayla yapın. Kurulumdan sonra TV Fare uygulamasını açın. "
-                + "Sonra \"TV Fare İmleci\" hizmetini AÇIK yapın.\n\n"
-                + "Not: Eski TV Fare uygulamasını mutlaka önce kaldırın. "
-                + "Güncelleme kurulumu kilidi kaldırmaz.");
+                + "GÜNCELLEME: \"Güncelle\" düğmesine basın. Kaldırmanız gerekmez. Ayarlarınız kalır.\n\n"
+                + "HİZMET AÇILMIYORSA (anahtar kendiliğinden kapanıyorsa): TV Fare uygulamasını kaldırın. "
+                + "Sonra bu uygulama ile tekrar kurun. Dosya yöneticisi ile yapılan eski kurulum kilidi taşır.\n\n"
+                + "Kurulumdan sonra TV Fare uygulamasını açın. \"TV Fare İmleci\" hizmetini AÇIK yapın.");
         root.addView(help);
 
         ScrollView scroll = new ScrollView(this);
@@ -134,27 +137,67 @@ public class InstallerActivity extends Activity {
     }
 
     private void refresh() {
-        boolean installed = isTargetInstalled();
+        PackageInfo installedInfo = installedInfo();
+        PackageInfo bundled = bundledInfo();
+        boolean installed = installedInfo != null;
         boolean canInstall = canInstallPackages();
+        boolean newer = bundled != null && (!installed || versionCode(bundled) > versionCode(installedInfo));
 
         StringBuilder sb = new StringBuilder();
-        sb.append("TV Fare: ").append(installed ? "KURULU" : "KURULU DEĞİL");
+        sb.append("Kurulu TV Fare: ").append(installed ? installedInfo.versionName : "YOK");
+        sb.append("\nBu paketteki TV Fare: ").append(bundled != null ? bundled.versionName : "?");
         sb.append("\nKurulum izni: ").append(canInstall ? "VAR ✓" : "YOK");
         if (lastResult != null) {
             sb.append("\nSon kurulum: ").append(lastResult);
         }
         status.setText(sb);
 
+        if (!installed) {
+            installButton.setText("TV Fare uygulamasını kur");
+        } else if (newer) {
+            installButton.setText("TV Fare uygulamasını güncelle (" + installedInfo.versionName + " → "
+                    + bundled.versionName + ")");
+        } else {
+            installButton.setText("TV Fare güncel ✓");
+        }
         uninstallButton.setEnabled(installed);
         permissionButton.setEnabled(!canInstall);
-        installButton.setEnabled(canInstall && !installed);
+        installButton.setEnabled(canInstall && newer);
         openButton.setEnabled(installed);
 
-        Button next = installed && lastResult == null ? uninstallButton
-                : !canInstall ? permissionButton
-                : !installed ? installButton
-                : openButton;
+        Button next = !canInstall ? permissionButton
+                : newer ? installButton
+                : installed ? openButton
+                : installButton;
         next.requestFocus();
+    }
+
+    @SuppressWarnings("deprecation")
+    private static long versionCode(PackageInfo info) {
+        return Build.VERSION.SDK_INT >= 28 ? info.getLongVersionCode() : info.versionCode;
+    }
+
+    private PackageInfo installedInfo() {
+        try {
+            return getPackageManager().getPackageInfo(TARGET, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
+    }
+
+    /** Reads the version of the APK inside this installer. */
+    private PackageInfo bundledInfo() {
+        File file = new File(getCacheDir(), ASSET);
+        try (InputStream in = getAssets().open(ASSET); OutputStream out = new FileOutputStream(file)) {
+            byte[] buf = new byte[65536];
+            int n;
+            while ((n = in.read(buf)) > 0) {
+                out.write(buf, 0, n);
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return getPackageManager().getPackageArchiveInfo(file.getPath(), 0);
     }
 
     private void install() {
@@ -215,15 +258,6 @@ public class InstallerActivity extends Activity {
 
     private boolean canInstallPackages() {
         return Build.VERSION.SDK_INT < 26 || getPackageManager().canRequestPackageInstalls();
-    }
-
-    private boolean isTargetInstalled() {
-        try {
-            getPackageManager().getPackageInfo(TARGET, 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
     }
 
     private Button addButton(LinearLayout root, String text, View.OnClickListener listener) {
