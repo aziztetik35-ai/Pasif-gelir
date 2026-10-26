@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+}
+
+// The installer carries the TV Fare APK as an asset and installs it with a PackageInstaller session.
+def tvFareAssets = layout.buildDirectory.dir('generated/tvfare-assets')
+def copyTvFareApk = tasks.register('copyTvFareApk', Copy) {
+    dependsOn ':app:assembleRelease'
+    from(project(':app').layout.buildDirectory.file('outputs/apk/release/app-release.apk'))
+    into(tvFareAssets)
+    rename { 'TvFare.apk' }
+}
+
+android {
+    namespace 'com.aziz.tvmouse.installer'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.aziz.tvmouse.installer'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('../app/tvmouse.keystore')
+            storePassword 'tvmouse123'
+            keyAlias 'tvmouse'
+            keyPassword 'tvmouse123'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir tvFareAssets
+        }
+    }
+
+    androidResources {
+        noCompress 'apk'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+tasks.named('preBuild') {
+    dependsOn copyTvFareApk
+}

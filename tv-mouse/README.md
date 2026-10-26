@@ -26,21 +26,28 @@ Uygulama bir erişilebilirlik hizmetidir. Hizmet arka planda her zaman çalış�
 
 Sol oku basılı tutup OK tuşuna basmak da çalışır.
 
-## Ayar kilitli ise (Android 13 ve sonrası)
+## Ayar kendiliğinden kapanıyorsa (Android 13 ve sonrası)
 
-Android, dışarıdan yüklenen uygulamada erişilebilirlik ayarını kilitleyebilir.
+Android, dosya yöneticisi ile kurulan uygulamada erişilebilirlik ayarını kilitler ("kısıtlanmış ayar").
+`TvFareKurucu.apk` bu sorunu bilgisayar olmadan çözer. Kurucu, TV Fare uygulamasını
+PackageInstaller oturumu ile kurar. Android bu yöntemde kilit koymaz.
 
-- Ayarlar > Uygulamalar > TV Fare > sağ üst menü > "Kısıtlanmış ayarlara izin ver".
-- Bu menü yoksa bilgisayardan ADB kullanın:
+1. `TvFareKurucu.apk` dosyasını dosya yöneticisi ile kurun.
+2. Kurucuyu açın. Adımları sırayla yapın:
+   1. Eski TV Fare uygulamasını kaldır.
+   2. Kurulum iznini ver.
+   3. TV Fare uygulamasını kur.
+   4. TV Fare uygulamasını aç.
+3. "TV Fare İmleci" hizmetini AÇIK yapın.
+
+TV Fare ekranı "Kısıtlanmış ayar: EVET / HAYIR" bilgisini ve son hatayı gösterir.
+
+Bilgisayar varsa ADB de kullanabilirsiniz:
 
 ```
 adb connect <TV-IP-ADRESI>
 adb shell appops set com.aziz.tvmouse ACCESS_RESTRICTED_SETTINGS allow
-adb shell settings put secure enabled_accessibility_services com.aziz.tvmouse/.MouseService
-adb shell settings put secure accessibility_enabled 1
 ```
-
-Not: İkinci `settings put` komutu, açık olan diğer erişilebilirlik hizmetlerini kapatır.
 
 ## Derleme
 
@@ -49,5 +56,5 @@ echo "sdk.dir=/ANDROID/SDK/YOLU" > local.properties
 ./gradlew assembleRelease
 ```
 
-Çıktı: `app/build/outputs/apk/release/app-release.apk`.
+Çıktı: `app/build/outputs/apk/release/app-release.apk` ve `installer/build/outputs/apk/release/installer-release.apk`.
 İmza anahtarı `app/tvmouse.keystore` dosyasındadır. Aynı anahtar ile güncelleme kurulur.

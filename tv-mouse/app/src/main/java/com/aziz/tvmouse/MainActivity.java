@@ -1,11 +1,14 @@
 package com.aziz.tvmouse;
 
 import android.app.Activity;
+import android.app.AppOpsManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -15,6 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 /** Setup screen: shows the service state and opens the accessibility settings. */
 public class MainActivity extends Activity {
@@ -86,11 +94,11 @@ public class MainActivity extends Activity {
                 + "• Kanal ^ / v tuşları: sayfayı yukarı / aşağı kaydırır.\n"
                 + "• İmleci ekranın kenarına itin: sayfa o yöne kayar.\n"
                 + "• Geri, Ana ekran ve ses tuşları normal çalışır.\n\n"
-                + "AYAR KİLİTLİ İSE\n"
-                + "Android 13 ve sonrası, dışarıdan yüklenen uygulamada bu ayarı kilitleyebilir.\n"
-                + "Ayarlar > Uygulamalar > " + getString(R.string.app_name)
-                + " > (sağ üst menü) > \"Kısıtlanmış ayarlara izin ver\" seçin.\n"
-                + "Bu menü yoksa bilgisayardan ADB komutlarını kullanın (README dosyasına bakın).");
+                + "AYAR KENDİLİĞİNDEN KAPANIYORSA\n"
+                + "Android 13 ve sonrası, dosya yöneticisi ile kurulan uygulamada bu ayarı kilitler.\n"
+                + "1. Bu uygulamayı kaldırın.\n"
+                + "2. \"TV Fare Kurucu\" uygulamasını kurun ve açın.\n"
+                + "3. Kurucu ile TV Fare uygulamasını tekrar kurun. Kilit gelmez.");
         root.addView(help);
 
         ScrollView scroll = new ScrollView(this);
@@ -102,14 +110,61 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        StringBuilder text = new StringBuilder();
         if (isServiceEnabled()) {
-            status.setText("Hizmet durumu: AÇIK ✓");
+            text.append("Hizmet durumu: AÇIK ✓");
             status.setTextColor(Color.rgb(102, 187, 106));
         } else {
-            status.setText("Hizmet durumu: KAPALI. Aşağıdaki adımları yapın.");
+            text.append("Hizmet durumu: KAPALI. Aşağıdaki adımları yapın.");
             status.setTextColor(Color.rgb(239, 83, 80));
         }
+        text.append("\nAndroid sürümü: ").append(Build.VERSION.RELEASE)
+                .append(" (API ").append(Build.VERSION.SDK_INT).append(")");
+        Boolean restricted = isSettingRestricted();
+        if (restricted != null) {
+            text.append("\nKısıtlanmış ayar: ").append(restricted
+                    ? "EVET. Uygulamayı kaldırın. \"TV Fare Kurucu\" ile tekrar kurun."
+                    : "HAYIR");
+        }
+        String crash = readLastCrash();
+        if (crash != null) {
+            text.append("\n\nSON HATA (bu metnin fotoğrafını gönderin):\n").append(crash);
+        }
+        status.setText(text);
         toggleButton.setEnabled(MouseService.get() != null);
+    }
+
+    /** Returns true if Android blocks the accessibility setting for this app, or null if unknown. */
+    private Boolean isSettingRestricted() {
+        if (Build.VERSION.SDK_INT < 33) {
+            return null;
+        }
+        try {
+            AppOpsManager ops = (AppOpsManager) getSystemService(APP_OPS_SERVICE);
+            int mode = ops.unsafeCheckOpNoThrow("android:access_restricted_settings",
+                    Process.myUid(), getPackageName());
+            return mode == AppOpsManager.MODE_ERRORED || mode == AppOpsManager.MODE_IGNORED;
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private String readLastCrash() {
+        File file = new File(getFilesDir(), TvMouseApp.CRASH_FILE);
+        if (!file.exists()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader r = new BufferedReader(new FileReader(file))) {
+            String line;
+            int lines = 0;
+            while ((line = r.readLine()) != null && lines++ < 12) {
+                sb.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return sb.toString();
     }
 
     private void openAccessibilitySettings() {
