@@ -392,6 +392,97 @@ public class MouseServiceTest {
         assertEquals(1, gestures().size());
     }
 
+    /** One clickable node around the cursor, like an ad with a close button drawn inside. */
+    private AccessibilityNodeInfo clickableAroundCursor(int halfW, int halfH, String className) throws Exception {
+        int cx = (int) field("x");
+        int cy = (int) field("y");
+        AccessibilityNodeInfo root = node(new Rect(0, 0, 10000, 10000));
+        AccessibilityNodeInfo n = actionable(node(new Rect(cx - halfW, cy - halfH, cx + halfW, cy + halfH)));
+        n.setClickable(true);
+        n.setClassName(className);
+        shadowOf(root).addChild(n);
+        screen(root);
+        return n;
+    }
+
+    @Test
+    public void largeClickableNodeGetsRealTouch() throws Exception {
+        turnOn();
+        AccessibilityNodeInfo ad = clickableAroundCursor(500, 300, "android.widget.FrameLayout");
+        press(OK);
+        advance(50);
+        assertTrue("no node click on the whole ad", shadowOf(ad).getPerformedActions().isEmpty());
+        assertEquals(1, gestures().size());
+    }
+
+    @Test
+    public void webViewGetsRealTouch() throws Exception {
+        turnOn();
+        AccessibilityNodeInfo web = clickableAroundCursor(50, 30, "android.webkit.WebView");
+        press(OK);
+        advance(50);
+        assertTrue(shadowOf(web).getPerformedActions().isEmpty());
+        assertEquals(1, gestures().size());
+    }
+
+    @Test
+    public void secondClickOnSamePlaceUsesTouch() throws Exception {
+        turnOn();
+        AccessibilityNodeInfo button = buttonUnderCursor(true, false);
+        press(OK);
+        advance(500);
+        press(OK);
+        advance(50);
+        assertEquals("first click: node", 1, shadowOf(button).getPerformedActions().size());
+        assertEquals("second click: touch", 1, gestures().size());
+        advance(500);
+        press(OK);
+        advance(50);
+        assertEquals("third click: node again", 2, shadowOf(button).getPerformedActions().size());
+        assertEquals(1, gestures().size());
+    }
+
+    @Test
+    public void clickAfterPauseUsesNodeAgain() throws Exception {
+        turnOn();
+        AccessibilityNodeInfo button = buttonUnderCursor(true, false);
+        press(OK);
+        advance(3000);
+        press(OK);
+        advance(50);
+        assertEquals(2, shadowOf(button).getPerformedActions().size());
+        assertEquals(0, gestures().size());
+    }
+
+    @Test
+    public void clickOnOtherPlaceUsesNodeAgain() throws Exception {
+        turnOn();
+        float x0 = field("x");
+        AccessibilityNodeInfo button = clickableAroundCursor(300, 150, "android.widget.Button"); // 9 % of the screen
+        press(OK);
+        advance(200);
+        down(RIGHT);
+        advance(400);
+        up(RIGHT);
+        float moved = field("x") - x0;
+        assertTrue("moved " + moved, moved > 40 && moved < 300);
+        press(OK);
+        advance(50);
+        assertEquals("both clicks are node clicks", 2, shadowOf(button).getPerformedActions().size());
+        assertEquals(0, gestures().size());
+    }
+
+    @Test
+    public void nodeModeClicksLargeNode() throws Exception {
+        prefs.sp.edit().putInt(Prefs.CLICK, Prefs.CLICK_NODE).commit();
+        turnOn();
+        AccessibilityNodeInfo ad = clickableAroundCursor(500, 300, "android.widget.FrameLayout");
+        press(OK);
+        advance(50);
+        assertEquals(Collections.singletonList(AccessibilityNodeInfo.ACTION_CLICK), shadowOf(ad).getPerformedActions());
+        assertEquals(0, gestures().size());
+    }
+
     @Test
     public void touchModeSkipsNode() throws Exception {
         prefs.sp.edit().putInt(Prefs.CLICK, Prefs.CLICK_TOUCH).commit();

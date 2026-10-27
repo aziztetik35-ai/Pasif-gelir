@@ -72,6 +72,9 @@ public class MouseService extends AccessibilityService
     private static final long HIDE_MS = 5000;
     private static final long RECORD_TIMEOUT_MS = 15000;
     private static final long FOCUS_TAKE_MS = 400;
+    private static final long RETRY_CLICK_MS = 2500;
+    private static final float RETRY_CLICK_PX = 30f;
+    private static final float LARGE_NODE_PART = 0.12f;
 
     private static MouseService instance;
     private static StateListener stateListener;
@@ -121,6 +124,10 @@ public class MouseService extends AccessibilityService
     private boolean backExited;
     private long moveStart;
     private long lastEdgeScroll;
+    private long lastClickTime;
+    private float lastClickX;
+    private float lastClickY;
+    private boolean lastClickWasNode;
 
     private Recorder recorder;
 
@@ -607,15 +614,27 @@ public class MouseService extends AccessibilityService
         if (cursor != null) {
             cursor.flash();
         }
-        if (clickMode != Prefs.CLICK_TOUCH) {
+        long now = SystemClock.uptimeMillis();
+        // A second click on the same place soon after a node click: the first click did nothing
+        // visible for the user, so this time send a real touch.
+        boolean retry = lastClickWasNode && now - lastClickTime <= RETRY_CLICK_MS
+                && Math.abs(x - lastClickX) <= RETRY_CLICK_PX * unit && Math.abs(y - lastClickY) <= RETRY_CLICK_PX * unit;
+        lastClickTime = now;
+        lastClickX = x;
+        lastClickY = y;
+        lastClickWasNode = false;
+
+        if (clickMode == Prefs.CLICK_NODE || (clickMode == Prefs.CLICK_AUTO && !retry)) {
             AccessibilityNodeInfo node = findNodeAt(x, y, longPress ? NodeTest.LONG_CLICK : NodeTest.CLICK);
+            boolean fits = node != null && (clickMode == Prefs.CLICK_NODE || nodeClickFits(node));
             int action = longPress ? AccessibilityNodeInfo.ACTION_LONG_CLICK : AccessibilityNodeInfo.ACTION_CLICK;
-            boolean done = node != null && node.performAction(action);
+            boolean done = fits && node.performAction(action);
             if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "click at " + (int) x + "," + (int) y + " node=" + (node != null ? node.getClassName() + " "
-                        + node.getText() : "none") + " done=" + done);
+                        + node.getText() : "none") + " fits=" + fits + " done=" + done);
             }
             if (done) {
+                lastClickWasNode = true;
                 return;
             }
             if (clickMode == Prefs.CLICK_NODE) {
@@ -623,6 +642,26 @@ public class MouseService extends AccessibilityService
             }
         }
         tapGesture(longPress);
+    }
+
+    /**
+     * True if a node click does the same as a touch at the cursor. A large clickable node
+     * (for example an ad with a drawn close button) or a web or video surface needs a real
+     * touch at the point, because the node click does not know the point.
+     */
+    private boolean nodeClickFits(AccessibilityNodeInfo node) {
+        CharSequence cls = node.getClassName();
+        if (cls != null) {
+            String c = cls.toString();
+            if (c.contains("WebView") || c.contains("SurfaceView") || c.contains("TextureView")
+                    || c.contains("VideoView")) {
+                return false;
+            }
+        }
+        Rect r = new Rect();
+        node.getBoundsInScreen(r);
+        long area = (long) r.width() * r.height();
+        return area <= (long) (LARGE_NODE_PART * screenW * screenH);
     }
 
     private void tapGesture(boolean longPress) {

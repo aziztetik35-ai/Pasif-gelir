@@ -70,7 +70,10 @@ adb shell appops set com.aziz.tvmouse ACCESS_RESTRICTED_SETTINGS allow
 ## Sorun giderme
 
 - **Kumanda kilitlendi gibi:** fare modundasınız. Geri tuşunu 1 saniye basılı tutun. Fare modu kapanır.
-- **Tıklama çalışmıyor:** TV Fare > "Tıklama yöntemi" ayarını değiştirin.
+- **Tıklama çalışmıyor (örnek: reklamdaki çarpı):** aynı yere tekrar tıklayın. İkinci tıklama gerçek
+  dokunma kullanır. Yine çalışmazsa TV Fare > "Tıklama yöntemi" ayarını değiştirin.
+  "Otomatik" yöntem büyük öğelerde (ekranın %12'sinden büyük) ve WebView/video yüzeylerinde her zaman
+  gerçek dokunma kullanır. Bu öğelerin içindeki çizilmiş düğmeler (örnek: reklam çarpısı) ayrı öğe değildir.
 - **Hata kaydı:** uygulama çökerse, TV Fare ekranı "SON HATA" metnini gösterir.
 - **Ayrıntılı kayıt (ADB):** `adb shell setprop log.tag.TvMouse DEBUG` ve `adb logcat -s TvMouse`.
 
